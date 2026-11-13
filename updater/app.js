@@ -31,6 +31,7 @@ function jumla(i) {
   const h = i.bosqichlar[i.navbatdagi]?.holat;
   if (!i.navbatdagi) return { matn: "E'lon qilindi", kerak: false, tayyor: true };
   if (h === 'xato') return { matn: "To'xtab qoldi. Abdulloh ko'rib chiqadi", kerak: false, xato: true };
+  if (i.topshirildi && i.topshirildi.bosqich === i.navbatdagi) return { matn: `Javob bo'lmadi. Mas'uliyat ${i.topshirildi.kimga.join(', ')} ga o'tdi`, kerak: false, xato: true };
   return {
     qabul: { matn: 'Agent materialni qabul qilyapti' },
     transkript: { matn: "Agent materialni o'qiyapti" },
