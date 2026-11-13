@@ -1,0 +1,26 @@
+/* Base styles that give the tokens their defaults. Import after tokens.css. */
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-family: var(--ds-font-body);
+  font-size: var(--ds-font-size-base);
+  line-height: var(--ds-line-height-base);
+  color: var(--ds-color-text-default);
+  background: var(--ds-color-bg-default);
+}
+h1, h2, h3, h4 { font-family: var(--ds-font-display); font-weight: var(--ds-font-weight-display); text-wrap: balance; }
+p { text-wrap: pretty; max-width: var(--ds-size-measure); }
+:focus-visible { outline: 2px solid var(--ds-color-border-focus); outline-offset: 2px; }
+::selection { background: var(--ds-color-accent-default); color: var(--ds-color-text-on-accent); }
+img, video { outline: 1px solid var(--ds-color-border-default); outline-offset: -1px; }
+@media (prefers-reduced-motion: reduce) {
+  /* Reduced motion replaces movement rather than removing feedback: a slide, zoom or morph becomes a short opacity
+     fade, because only opacity and colour keep transitioning. Nothing animates into or out of blur or scale, and
+     loops stop after one pass. Movement that follows the finger (a drag, a swipe) is not a transition and stays. */
+  *, *::before, *::after {
+    transition-property: opacity, color, background-color, border-color, outline-color, fill, stroke, visibility, display, overlay !important;
+    transition-duration: var(--ds-duration-reduced, 150ms) !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
