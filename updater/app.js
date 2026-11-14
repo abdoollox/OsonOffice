@@ -103,7 +103,8 @@ function ishChiz() {
       ${j.kerak ? `<button class="tugma asosiy toliq" id="chat">${ik('message-circle')}${esc(j.tugma)}</button>` : ''}
     </section>
     ${i.materiallar?.length ? `<details class="blok" id="mat" ${S.matOchiq ? 'open' : ''}><summary>${ik('folder')}PM materiallari · ${i.materiallar.length} ta${ik('chevron-right')}</summary>
-      <ul class="materiallar">${i.materiallar.map((m) => `<li><div class="mat-bosh">${ik(m.tur === 'video' ? 'video' : m.tur === 'ovoz' ? 'mic' : m.tur === 'rasm' ? 'image' : 'file-text')}<b>${esc(m.tur === 'video' ? 'Video' : m.tur === 'ovoz' ? 'Ovozli xabar' : m.tur === 'rasm' ? 'Rasm' : 'Matn')}</b><span>${esc(m.vaqt.slice(5))}${m.tur !== 'matn' ? ` · ${m.mb} MB` : ''}</span></div>
+      <ul class="materiallar">${i.materiallar.map((m) => `<li>${(() => { const ichi = `${ik(m.tur === 'video' ? 'video' : m.tur === 'ovoz' ? 'mic' : m.tur === 'rasm' ? 'image' : 'file-text')}<b>${esc(m.tur === 'video' ? 'Video' : m.tur === 'ovoz' ? 'Ovozli xabar' : m.tur === 'rasm' ? 'Rasm' : 'Matn')}</b><span>${esc(m.vaqt.slice(5))}${m.tur !== 'matn' ? ` · ${m.mb} MB` : ''}</span>`;
+          return m.havola ? `<a class="mat-bosh tg" href="${esc(m.havola)}" data-tg>${ichi}${ik('chevron-right')}</a>` : `<div class="mat-bosh">${ichi}</div>`; })()}
         ${m.matn ? `<details class="mat-matn"><summary>${m.tur === 'matn' ? 'Matnni ochish' : 'Aytilganlar (matn)'}</summary><div class="matn">${esc(m.matn)}</div></details>` : ''}</li>`).join('')}</ul></details>` : ''}
     ${i.loyiha ? `<details class="blok" id="loy" ${S.loyihaOchiq ? 'open' : ''}><summary>${ik('file-text')}Ssenariyni o'qish${ik('chevron-right')}</summary>
       <div class="matn">${esc(i.loyiha)}</div></details>` : ''}
@@ -117,6 +118,8 @@ function ishChiz() {
   document.getElementById('orqa')?.addEventListener('click', royxatga);
   document.getElementById('loy')?.addEventListener('toggle', (e) => (S.loyihaOchiq = e.target.open));
   document.getElementById('mat')?.addEventListener('toggle', (e) => (S.matOchiq = e.target.open));
+  // material bosilsa — Telegram guruhdagi o'sha xabar ochiladi
+  document.querySelectorAll('a[data-tg]').forEach((a) => a.addEventListener('click', (e) => { if (tg?.openTelegramLink) { e.preventDefault(); tg.openTelegramLink(a.href); } }));
   document.getElementById('ichki')?.addEventListener('toggle', (e) => (S.ichkiOchiq = e.target.open));
   // chatga qaytish: sahifa yopiladi, odam o'sha chatda (guruh yoki bot) javob yozadi
   document.getElementById('chat')?.addEventListener('click', () => (tg?.close ? tg.close() : history.back()));
