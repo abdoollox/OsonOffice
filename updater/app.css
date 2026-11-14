@@ -116,3 +116,25 @@ a.mat-bosh.tg { color: inherit; text-decoration: none; min-height: var(--ds-size
 a.mat-bosh.tg .ik:first-child { color: var(--ds-color-accent-text); }
 a.mat-bosh.tg span { margin-left: auto; }
 a.mat-bosh.tg .ik:last-child { color: var(--ds-color-text-faint); }
+
+/* Ssenariy sahnalari — PM videosidan kadr + diktor matni */
+.sahnalar h2 { display: flex; align-items: center; gap: var(--ds-space-2); margin: 0; padding: var(--ds-space-3) var(--ds-space-4) var(--ds-space-2);
+  color: var(--ds-color-text-default); font-weight: var(--ds-font-weight-medium); }
+.sahnalar ol { list-style: none; margin: 0; padding: 0 var(--ds-space-3) var(--ds-space-3); display: grid; gap: var(--ds-space-3); }
+.sahna { display: grid; grid-template-columns: minmax(0, 44%) 1fr; gap: var(--ds-space-3); align-items: start; }
+.sahna-rasm { position: relative; aspect-ratio: 16 / 9; border-radius: var(--ds-radius-item); overflow: hidden; background: var(--ds-color-surface-sunken); }
+.sahna-rasm img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.sahna-rasm.bosh { display: grid; place-items: center; padding: var(--ds-space-2) var(--ds-space-3); }
+.sahna-rasm.bosh p { margin: 0; font-size: var(--ds-font-size-xs); color: var(--ds-color-text-muted); text-align: center; line-height: 1.35;
+  display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+.sahna-n { position: absolute; left: var(--ds-space-1-5); top: var(--ds-space-1-5); min-width: 20px; height: 20px; padding: 0 var(--ds-space-1); border-radius: var(--ds-radius-tag);
+  display: grid; place-items: center; font-size: var(--ds-font-size-xs); font-weight: var(--ds-font-weight-semibold); font-variant-numeric: tabular-nums;
+  background: var(--ds-color-accent-default); color: var(--ds-color-text-on-accent); }
+.sahna-matn b { display: block; font-weight: var(--ds-font-weight-medium); }
+.sahna-matn p { margin: var(--ds-space-1) 0 0; font-size: var(--ds-font-size-sm); }
+.sahna-ekran { color: var(--ds-color-text-muted); }
+.sahna-diktor { color: var(--ds-color-text-default); }
+@media (max-width: 360px) { .sahna { grid-template-columns: 1fr; } }
+.sahna-rasm[role=button] { cursor: zoom-in; }
+.sahna.katta { grid-template-columns: 1fr; }
+.sahna.katta .sahna-rasm { cursor: zoom-out; }

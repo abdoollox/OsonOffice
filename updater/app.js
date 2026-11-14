@@ -106,7 +106,10 @@ function ishChiz() {
       <ul class="materiallar">${i.materiallar.map((m) => `<li>${(() => { const ichi = `${ik(m.tur === 'video' ? 'video' : m.tur === 'ovoz' ? 'mic' : m.tur === 'rasm' ? 'image' : 'file-text')}<b>${esc(m.tur === 'video' ? 'Video' : m.tur === 'ovoz' ? 'Ovozli xabar' : m.tur === 'rasm' ? 'Rasm' : 'Matn')}</b><span>${esc(m.vaqt.slice(5))}${m.tur !== 'matn' ? ` · ${m.mb} MB` : ''}</span>`;
           return m.havola ? `<a class="mat-bosh tg" href="${esc(m.havola)}" data-tg>${ichi}${ik('chevron-right')}</a>` : `<div class="mat-bosh">${ichi}</div>`; })()}
         ${m.matn ? `<details class="mat-matn"><summary>${m.tur === 'matn' ? 'Matnni ochish' : 'Aytilganlar (matn)'}</summary><div class="matn">${esc(m.matn)}</div></details>` : ''}</li>`).join('')}</ul></details>` : ''}
-    ${i.loyiha ? `<details class="blok" id="loy" ${S.loyihaOchiq ? 'open' : ''}><summary>${ik('file-text')}Ssenariyni o'qish${ik('chevron-right')}</summary>
+    ${i.sahnalar?.length ? `<section class="blok sahnalar" aria-label="Ssenariy sahnalari"><h2>${ik('clapperboard')}Ssenariy · ${i.sahnalar.length} sahna</h2>
+      <ol>${i.sahnalar.map((s) => `<li class="sahna${S.katta.has(String(s.n)) ? ' katta' : ''}" data-n="${esc(s.n)}"><div class="sahna-rasm${s.rasm ? '' : ' bosh'}"${s.rasm ? ' role="button" tabindex="0" aria-label="Kadrni kattalashtirish"' : ''}>${s.rasm ? `<img src="${s.rasm}" alt="" loading="lazy">` : `<p>${esc(s.ekran)}</p>`}<span class="sahna-n">${esc(s.n)}</span></div>
+        <div class="sahna-matn"><b>${esc(s.nom)}</b>${s.rasm && s.ekran ? `<p class="sahna-ekran">${esc(s.ekran)}</p>` : ''}${s.diktor ? `<p class="sahna-diktor">«${esc(s.diktor)}»</p>` : ''}</div></li>`).join('')}</ol></section>` : ''}
+    ${i.loyiha ? `<details class="blok" id="loy" ${S.loyihaOchiq ? 'open' : ''}><summary>${ik('file-text')}${i.sahnalar?.length ? "Ssenariyning to'liq matni" : "Ssenariyni o'qish"}${ik('chevron-right')}</summary>
       <div class="matn">${esc(i.loyiha)}</div></details>` : ''}
     ${S.data.ega ? `<details class="blok ichki" id="ichki" ${S.ichkiOchiq ? 'open' : ''}><summary>${ik('list-checks')}Batafsil: 12 ichki bosqich${ik('chevron-right')}</summary>
       <ol class="qadamlar">${S.data.bosqichlar.map((b, n) => {
@@ -117,6 +120,8 @@ function ishChiz() {
   </main>`;
   document.getElementById('orqa')?.addEventListener('click', royxatga);
   document.getElementById('loy')?.addEventListener('toggle', (e) => (S.loyihaOchiq = e.target.open));
+  // sahna kadri bosilsa — butun kenglikda (yana bosilsa — kichrayadi)
+  document.querySelectorAll('.sahna-rasm[role=button]').forEach((r) => { const t = () => { const li = r.closest('.sahna'); li.classList.toggle('katta') ? S.katta.add(li.dataset.n) : S.katta.delete(li.dataset.n); }; r.addEventListener('click', t); r.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); t(); } }); });
   document.getElementById('mat')?.addEventListener('toggle', (e) => (S.matOchiq = e.target.open));
   // material bosilsa — Telegram guruhdagi o'sha xabar ochiladi
   document.querySelectorAll('a[data-tg]').forEach((a) => a.addEventListener('click', (e) => { if (tg?.openTelegramLink) { e.preventDefault(); tg.openTelegramLink(a.href); } }));
@@ -126,8 +131,8 @@ function ishChiz() {
 }
 
 // ── navigatsiya ──
-const S = { data: null, ish: null, royxatdan: false, loyihaOchiq: false, ichkiOchiq: false };
-function och(nom) { S.ish = nom; S.royxatdan = true; S.loyihaOchiq = false; chiz(); scrollTo(0, 0); }
+const S = { data: null, ish: null, royxatdan: false, loyihaOchiq: false, ichkiOchiq: false, katta: new Set() };
+function och(nom) { S.ish = nom; S.royxatdan = true; S.loyihaOchiq = false; S.katta.clear(); chiz(); scrollTo(0, 0); }
 function royxatga() { S.ish = null; chiz(); scrollTo(0, 0); }
 tg?.BackButton?.onClick(royxatga);
 function chiz() {
