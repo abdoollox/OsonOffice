@@ -1,5 +1,5 @@
-/* Oson Updater Mini App. Hamma qiymat — tokens.css (Broom dizayn tizimi, updater/.broom/), bu yerda faqat joylashuv. */
-/* Inter — SIL OFL 1.1, o'zimizdan beriladi (sinxron-taqdimot/uslub/shrift/ dan) */
+﻿/* Oson Updater Mini App. Hamma qiymat вЂ” tokens.css (Broom dizayn tizimi, updater/.broom/), bu yerda faqat joylashuv. */
+/* Inter вЂ” SIL OFL 1.1, o'zimizdan beriladi (sinxron-taqdimot/uslub/shrift/ dan) */
 @font-face { font-family: Inter; font-style: normal; font-display: swap; font-weight: 100 900; src: url(shrift/inter-latin-wght-normal.woff2) format('woff2');
   unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
 @font-face { font-family: Inter; font-style: normal; font-display: swap; font-weight: 100 900; src: url(shrift/inter-cyrillic-wght-normal.woff2) format('woff2');
@@ -20,7 +20,7 @@ h2 { font-size: var(--ds-font-size-base); line-height: var(--ds-line-height-base
 .orqa:hover { background: var(--ds-color-mute-ghost-hover); }
 .orqa .ik { width: 22px; height: 22px; }
 
-/* Card — interactive: bitta update */
+/* Card вЂ” interactive: bitta update */
 .karta { display: block; width: 100%; text-align: left; border: 0; background: var(--ds-color-surface-default);
   border-radius: var(--ds-radius-surface); padding: var(--ds-space-4); margin-bottom: var(--ds-space-2); transition: background-color var(--ds-duration-fast); }
 .karta:hover { background: var(--ds-color-surface-sunken-hover); }
@@ -36,7 +36,7 @@ h2 { font-size: var(--ds-font-size-base); line-height: var(--ds-line-height-base
 .jumla.tayyor { color: var(--ds-color-success-text); font-weight: var(--ds-font-weight-medium); }
 .jumla.katta { font-size: var(--ds-font-size-md); line-height: var(--ds-line-height-md); text-align: center; margin: var(--ds-space-5) 0 0; }
 
-/* Stepper — horizontal, 5 qadam (buyurtma kuzatuvi kabi) */
+/* Stepper вЂ” horizontal, 5 qadam (buyurtma kuzatuvi kabi) */
 ol.kuzatuv { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, 1fr); }
 .kuzatuv li { display: flex; flex-direction: column; align-items: center; gap: var(--ds-space-1); position: relative; min-width: 0; }
 .kuzatuv li:not(:first-child)::before { content: ""; position: absolute; top: 9px; right: calc(50% + 14px); left: calc(-50% + 14px); height: 2px;
@@ -57,7 +57,7 @@ ol.kuzatuv { list-style: none; margin: 0; padding: 0; display: grid; grid-templa
 .kuzatuv.katta .belgi .ik { width: 16px; height: 16px; }
 .kuzatuv.katta .q-nom { font-size: var(--ds-font-size-sm); }
 
-/* holat bloki (update sahifasi); odamdan javob kerak bo'lsa — ogohlantirish rangidagi yengil fon */
+/* holat bloki (update sahifasi); odamdan javob kerak bo'lsa вЂ” ogohlantirish rangidagi yengil fon */
 .holat-blok { background: var(--ds-color-surface-default); border-radius: var(--ds-radius-surface); padding: var(--ds-space-5) var(--ds-space-3); }
 .holat-blok.kerak { background: var(--ds-color-warning-soft); }
 .holat-blok .tugma { margin-top: var(--ds-space-4); }
@@ -72,7 +72,7 @@ ol.kuzatuv { list-style: none; margin: 0; padding: 0; display: grid; grid-templa
 .tugma.toliq { width: 100%; }
 .tugma .ik { width: 20px; height: 20px; }
 
-/* Accordion — ssenariy va ichki bosqichlar */
+/* Accordion вЂ” ssenariy va ichki bosqichlar */
 .blok { background: var(--ds-color-surface-default); border-radius: var(--ds-radius-surface); margin-top: var(--ds-space-3); }
 details.blok > summary { list-style: none; display: flex; align-items: center; gap: var(--ds-space-2); min-height: var(--ds-size-control-lg);
   padding: var(--ds-space-1) var(--ds-space-4); font-weight: var(--ds-font-weight-medium); cursor: pointer; }
@@ -82,7 +82,7 @@ details[open].blok > summary .ik:last-child { transform: rotate(90deg); }
 details.ichki > summary { color: var(--ds-color-text-muted); }
 .matn { padding: 0 var(--ds-space-4) var(--ds-space-4); white-space: pre-wrap; overflow-wrap: anywhere; }
 
-/* Stepper — vertical, 12 ichki bosqich (faqat egaga) */
+/* Stepper вЂ” vertical, 12 ichki bosqich (faqat egaga) */
 ol.qadamlar { list-style: none; margin: 0; padding: 0 0 var(--ds-space-2); }
 .qadam { display: grid; grid-template-columns: 24px 1fr; gap: var(--ds-space-3); padding: var(--ds-space-1-5) var(--ds-space-4); }
 .qadam .belgi { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font-size: var(--ds-font-size-sm);
@@ -103,3 +103,12 @@ ol.qadamlar { list-style: none; margin: 0; padding: 0 0 var(--ds-space-2); }
 .ekran b { display: block; font-size: var(--ds-font-size-md); margin-bottom: var(--ds-space-1); }
 .ekran p { color: var(--ds-color-text-muted); margin: 0 auto; }
 .skelet { height: 120px; border-radius: var(--ds-radius-surface); background: var(--ds-color-surface-default); margin-top: var(--ds-space-3); }
+
+/* PM materiallari */
+ul.materiallar { list-style: none; margin: 0; padding: 0 0 var(--ds-space-2); }
+ul.materiallar > li { padding: var(--ds-space-2) var(--ds-space-4); border-top: 1px solid var(--ds-color-border-default); }
+.mat-bosh { display: flex; align-items: center; gap: var(--ds-space-2); }
+.mat-bosh .ik { color: var(--ds-color-text-muted); }
+.mat-bosh span { margin-left: auto; color: var(--ds-color-text-faint); font-size: var(--ds-font-size-sm); font-variant-numeric: tabular-nums; }
+.mat-matn > summary { cursor: pointer; color: var(--ds-color-accent-text); font-size: var(--ds-font-size-sm); padding-top: var(--ds-space-1); }
+.mat-matn .matn { padding: var(--ds-space-2) 0 0; color: var(--ds-color-text-muted); font-size: var(--ds-font-size-sm); max-height: 320px; overflow: auto; }

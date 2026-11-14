@@ -26,9 +26,12 @@ const QADAMLAR = [
   { nom: "E'lon", ich: ['elon-materiallari', 'elon'] },
 ];
 // hozirgi ichki bosqich → bir jumla; kerak: true — odamdan javob kutilyapti
+// ssenariy loyihasi yozilgan, faqat bir-ikki savol qolgan — PM uchun bu allaqachon "Ssenariy" qadami
+const ssenariyda = (i) => i.navbatdagi === 'savollar' && !!i.loyiha;
 function jumla(i) {
   const javobsiz = i.savollar.filter((s) => s.javob == null).length;
   const h = i.bosqichlar[i.navbatdagi]?.holat;
+  if (ssenariyda(i)) return { matn: `Ssenariy loyihasi tayyor · ${javobsiz} ta savol qoldi`, kerak: true, tugma: 'Chatda javob berish' };
   if (!i.navbatdagi) return { matn: "E'lon qilindi", kerak: false, tayyor: true };
   if (h === 'xato') return { matn: "To'xtab qoldi. Abdulloh ko'rib chiqadi", kerak: false, xato: true };
   if (i.topshirildi && i.topshirildi.bosqich === i.navbatdagi) return { matn: `Javob bo'lmadi. Mas'uliyat ${i.topshirildi.kimga.join(', ')} ga o'tdi`, kerak: false, xato: true };
@@ -46,6 +49,7 @@ function jumla(i) {
   }[i.navbatdagi] || { matn: 'Ishlanyapti' };
 }
 const qadamHol = (i, q) => {
+  if (ssenariyda(i)) return q.nom === 'Material' || q.nom === 'Savollar' ? 'tayyor' : q.nom === 'Ssenariy' ? 'hozir' : 'keyin';
   if (q.ich.every((id) => i.bosqichlar[id]?.holat === 'tayyor')) return 'tayyor';
   if (q.ich.includes(i.navbatdagi)) return 'hozir';
   return 'keyin';
@@ -98,6 +102,9 @@ function ishChiz() {
       <p class="jumla katta ${j.kerak ? 'kerak' : j.xato ? 'xato' : j.tayyor ? 'tayyor' : ''}">${esc(j.matn)}</p>
       ${j.kerak ? `<button class="tugma asosiy toliq" id="chat">${ik('message-circle')}${esc(j.tugma)}</button>` : ''}
     </section>
+    ${i.materiallar?.length ? `<details class="blok" id="mat" ${S.matOchiq ? 'open' : ''}><summary>${ik('folder')}PM materiallari · ${i.materiallar.length} ta${ik('chevron-right')}</summary>
+      <ul class="materiallar">${i.materiallar.map((m) => `<li><div class="mat-bosh">${ik(m.tur === 'video' ? 'video' : m.tur === 'ovoz' ? 'mic' : m.tur === 'rasm' ? 'image' : 'file-text')}<b>${esc(m.tur === 'video' ? 'Video' : m.tur === 'ovoz' ? 'Ovozli xabar' : m.tur === 'rasm' ? 'Rasm' : 'Matn')}</b><span>${esc(m.vaqt.slice(5))}${m.tur !== 'matn' ? ` · ${m.mb} MB` : ''}</span></div>
+        ${m.matn ? `<details class="mat-matn"><summary>${m.tur === 'matn' ? 'Matnni ochish' : 'Aytilganlar (matn)'}</summary><div class="matn">${esc(m.matn)}</div></details>` : ''}</li>`).join('')}</ul></details>` : ''}
     ${i.loyiha ? `<details class="blok" id="loy" ${S.loyihaOchiq ? 'open' : ''}><summary>${ik('file-text')}Ssenariyni o'qish${ik('chevron-right')}</summary>
       <div class="matn">${esc(i.loyiha)}</div></details>` : ''}
     ${S.data.ega ? `<details class="blok ichki" id="ichki" ${S.ichkiOchiq ? 'open' : ''}><summary>${ik('list-checks')}Batafsil: 12 ichki bosqich${ik('chevron-right')}</summary>
@@ -109,6 +116,7 @@ function ishChiz() {
   </main>`;
   document.getElementById('orqa')?.addEventListener('click', royxatga);
   document.getElementById('loy')?.addEventListener('toggle', (e) => (S.loyihaOchiq = e.target.open));
+  document.getElementById('mat')?.addEventListener('toggle', (e) => (S.matOchiq = e.target.open));
   document.getElementById('ichki')?.addEventListener('toggle', (e) => (S.ichkiOchiq = e.target.open));
   // chatga qaytish: sahifa yopiladi, odam o'sha chatda (guruh yoki bot) javob yozadi
   document.getElementById('chat')?.addEventListener('click', () => (tg?.close ? tg.close() : history.back()));
