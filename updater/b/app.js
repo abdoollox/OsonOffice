@@ -19,11 +19,11 @@ function mavzu() {
 tg?.ready(); tg?.expand(); mavzu(); tg?.onEvent?.('themeChanged', mavzu);
 
 const QADAMLAR = [
-  { id: 'material', nom: 'Material', ich: ['qabul', 'transkript'], izoh: 'PM funksiya haqida ovoz, video yoki matn yuboradi' },
-  { id: 'savollar', nom: 'Savollar', ich: ['tahlil', 'savollar'], izoh: "Agent tushunmagan joylarini so'raydi" },
-  { id: 'ssenariy', nom: 'Ssenariy', ich: ['loyiha-tasdiq'], izoh: 'Video sahnalari va diktor matni — PM tasdiqlaydi' },
-  { id: 'video', nom: 'Video', ich: ['yasash', 'ovoz', 'render', 'tekshiruv', 'tuzatish'], izoh: "Agent videoni yasaydi, PM va QA ko'radi" },
-  { id: 'elon', nom: "E'lon", ich: ['elon-materiallari', 'elon'], izoh: 'Post tayyorlanadi, ruxsat bilan kanalga chiqadi' },
+  { id: 'material', ikon: 'folder', nom: 'Material', ich: ['qabul', 'transkript'], izoh: 'PM funksiya haqida ovoz, video yoki matn yuboradi' },
+  { id: 'savollar', ikon: 'message-circle', nom: 'Savollar', ich: ['tahlil', 'savollar'], izoh: "Agent tushunmagan joylarini so'raydi" },
+  { id: 'ssenariy', ikon: 'clapperboard', nom: 'Ssenariy', ich: ['loyiha-tasdiq'], izoh: 'Video sahnalari va diktor matni — PM tasdiqlaydi' },
+  { id: 'video', ikon: 'video', nom: 'Video', ich: ['yasash', 'ovoz', 'render', 'tekshiruv', 'tuzatish'], izoh: "Agent videoni yasaydi, PM va QA ko'radi" },
+  { id: 'elon', ikon: 'send-horizontal', nom: "E'lon", ich: ['elon-materiallari', 'elon'], izoh: 'Post tayyorlanadi, ruxsat bilan kanalga chiqadi' },
 ];
 const ssenariyda = (i) => i.navbatdagi === 'savollar' && !!i.loyiha;
 // hozirgi holat → bir jumla; kut: odamdan javob kutilyapti
@@ -65,7 +65,7 @@ function qatorHtml(i) {
   return `<button class="qator ${turi(h)}" data-ish="${esc(i.nom)}"><span class="chiziq"></span>
     <div><div class="qator-nom">${esc(nomi(i))} <span class="qator-dastur">· ${mahsulot(i.mahsulot)}</span></div>
       <p class="qator-holat">${esc(h.matn)}</p>
-      <div class="segment" aria-hidden="true">${QADAMLAR.map((q) => `<i class="${qadamHol(i, q)}"></i>`).join('')}</div></div>${ik('chevron-right')}</button>`;
+      <ol class="belgilar" aria-label="Qadamlar">${QADAMLAR.map((q) => { const hol = qadamHol(i, q); return `<li class="${hol}${hol === 'h' && h.kut ? ' kut' : ''}"><span class="b-ik">${ik(q.ikon)}${hol === 't' ? `<span class="b-ok">${ik('check')}</span>` : ''}</span><span class="b-nom">${q.nom}</span><span class="sr">${hol === 't' ? ' — bajarildi' : hol === 'h' ? ' — hozir' : ''}</span></li>`; }).join('')}</ol></div>${ik('chevron-right')}</button>`;
 }
 function royxatChiz() {
   const ishlar = S.data.ishlar;
@@ -116,7 +116,7 @@ function ishChiz() {
   const i = S.data.ishlar.find((x) => x.nom === S.ish);
   if (!i) { S.ish = null; return chiz(); }
   const h = holat(i), joriy = QADAMLAR.find((q) => qadamHol(i, q) === 'h');
-  const orqa = S.royxatdan ? `<button class="orqa" id="orqa" aria-label="Hamma update'lar">${ik('arrow-left')}</button>` : '';
+  const orqa = S.royxatdan && !tg?.BackButton ? `<button class="orqa" id="orqa" aria-label="Hamma update'lar">${ik('arrow-left')}</button>` : '';
   const yorliq = h.kut ? 'Sizni kutyapti' : h.tayyor ? 'Tayyor' : h.xato ? "To'xtadi" : 'Jarayonda';
   ilova.innerHTML = `<main>${ab()}
     <div class="tepa">${orqa}<div><span class="chip">${esc(mahsulot(i.mahsulot))}</span><h1>${esc(nomi(i))}</h1></div></div>

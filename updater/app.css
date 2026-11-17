@@ -145,3 +145,7 @@ a.mat-bosh.tg .ik:last-child { color: var(--ds-color-text-faint); }
 .ab a, .ab span { min-width: 44px; min-height: 32px; display: grid; place-items: center; font-weight: var(--ds-font-weight-semibold);
   font-size: var(--ds-font-size-sm); text-decoration: none; color: var(--ds-color-text-muted); }
 .ab span { background: var(--ds-color-accent-default); color: var(--ds-color-text-on-accent); }
+
+/* scroll chizig'i ko'rinmaydi (surish ishlaydi) — Abdulloh */
+html { scrollbar-width: none; }
+html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; }

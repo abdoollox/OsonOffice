@@ -11,10 +11,11 @@
   --t: 180ms ease;
 }
 :root[data-theme="dark"] {
-  --c-bg: #0B1220; --c-card: #111A2E; --c-fg: #E2E8F0; --c-muted: #A3B1C6; --c-faint: #8393A9; --c-border: #22314D; --c-line: #22314D;
-  --c-primary: #3B82F6; --c-primary-soft: #172554;
-  --c-wait: #FB923C; --c-wait-strong: #EA580C; --c-wait-soft: #3A1D0A;
-  --c-done: #4ADE80; --c-done-soft: #0F2A1A; --c-bad: #F87171; --c-bad-soft: #3B1111;
+  /* qora tuslar (Abdulloh: ko'k-qora emas, qoraning shade'lari) */
+  --c-bg: #161616; --c-card: #1f1f1f; --c-fg: #EDEDED; --c-muted: #B0B0B0; --c-faint: #8C8C8C; --c-border: #2E2E2E; --c-line: #2E2E2E;
+  --c-primary: #3B82F6; --c-primary-soft: #1C2433;
+  --c-wait: #FB923C; --c-wait-strong: #EA580C; --c-wait-soft: #2B1D12;
+  --c-done: #4ADE80; --c-done-soft: #15241A; --c-bad: #F87171; --c-bad-soft: #2E1616;
 }
 * { box-sizing: border-box; }
 html { background: var(--c-bg); color: var(--c-fg); font: 400 16px/1.5 var(--f-body); -webkit-font-smoothing: antialiased; }
@@ -52,6 +53,31 @@ main { max-width: 640px; margin: 0 auto; padding: var(--s4) var(--s4) calc(var(-
 .qator-holat { margin-top: var(--s1); font-size: 15px; color: var(--c-muted); }
 .qator.kut .qator-holat { color: var(--c-wait); font-weight: 600; }
 .qator .ik { color: var(--c-faint); }
+/* scroll chizig'i ko'rinmaydi (surish ishlaydi) */
+html { scrollbar-width: none; }
+html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* Ro'yxatdagi 5 qadam belgisi: bajarilgan — yashil + ✓, hozirgisi — ko'k (sizni kutsa — to'q sariq), keyingilari — xira */
+.belgilar { list-style: none; margin: var(--s3) 0 0; padding: 0; display: grid; grid-template-columns: repeat(5, 1fr); }
+.belgilar li { position: relative; display: grid; justify-items: center; gap: var(--s1); }
+.belgilar li::before { content: ''; position: absolute; top: 15px; right: 50%; width: 100%; height: 2px; background: var(--c-line); }
+.belgilar li:first-child::before { display: none; }
+.belgilar li.t::before, .belgilar li.h::before { background: var(--c-done); }
+.b-ik { position: relative; z-index: 1; width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center;
+  background: var(--c-card); border: 2px solid var(--c-line); color: var(--c-faint); }
+.b-ik > .ik { width: 16px; height: 16px; }
+.belgilar li.t .b-ik { background: var(--c-done-soft); border-color: var(--c-done); color: var(--c-done); }
+.belgilar li.h .b-ik { background: var(--c-primary); border-color: var(--c-primary); color: #fff; }
+.belgilar li.h.kut .b-ik { background: var(--c-wait-strong); border-color: var(--c-wait-strong); }
+.b-ok { position: absolute; right: -5px; bottom: -4px; width: 16px; height: 16px; border-radius: 50%; display: grid; place-items: center;
+  background: var(--c-done); color: var(--c-card); border: 2px solid var(--c-card); }
+.b-ok .ik { width: 10px; height: 10px; }
+.b-ok .ik path { stroke-width: 3.5; }
+.b-nom { font-size: 12px; line-height: 1.2; color: var(--c-faint); text-align: center; }
+.belgilar li.t .b-nom { color: var(--c-muted); }
+.belgilar li.h .b-nom { color: var(--c-fg); font-weight: 600; }
+.qator { grid-template-columns: 4px 1fr auto; }
 .segment { display: flex; gap: 3px; margin-top: var(--s2); }
 .segment i { flex: 1; height: 4px; border-radius: 2px; background: var(--c-line); }
 .segment i.t { background: var(--c-done); }

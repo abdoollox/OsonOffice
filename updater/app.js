@@ -96,7 +96,7 @@ function ishChiz() {
   const i = S.data.ishlar.find((x) => x.nom === S.ish);
   if (!i) { S.ish = null; return chiz(); }
   const j = jumla(i);
-  const orqa = S.royxatdan ? `<button class="orqa" id="orqa" aria-label="Hamma update'lar">${ik('arrow-left')}</button>` : '';
+  const orqa = S.royxatdan && !tg?.BackButton ? `<button class="orqa" id="orqa" aria-label="Hamma update'lar">${ik('arrow-left')}</button>` : '';
   ilova.innerHTML = `<main>${S.data ? ab() : ""}
     <div class="bosh">${orqa}<div><h1>${esc(nomi(i))}</h1><p class="izoh">${mahsulot(i.mahsulot)}</p></div></div>
     <section class="holat-blok ${j.kerak ? 'kerak' : ''}" aria-live="polite">
