@@ -179,21 +179,21 @@
 
 [data-theme="dark"] {
   color-scheme: dark;
-  --ds-color-bg-default: #101010;
-  --ds-color-bg-subtle: #191c21;
+  --ds-color-bg-default: #1c1f24;
+  --ds-color-bg-subtle: #24282e;
   --ds-color-bg-inverted: #ffffff;
-  --ds-color-surface-default: #191c21;
-  --ds-color-surface-raised: #2a2e34;
-  --ds-color-surface-sunken: #34383f;
-  --ds-color-surface-sunken-hover: #3e434b;
-  --ds-color-surface-glass: rgba(42, 46, 52, 0.8);
-  --ds-color-surface-overlay: #101010a3;
+  --ds-color-surface-default: #272b32;
+  --ds-color-surface-raised: #31363e;
+  --ds-color-surface-sunken: #3a3f47;
+  --ds-color-surface-sunken-hover: #454b54;
+  --ds-color-surface-glass: rgba(49, 54, 62, 0.8);
+  --ds-color-surface-overlay: #1c1f24a3;
   --ds-color-text-default: #ffffff;
   --ds-color-text-muted: #a9afb8;
   --ds-color-text-faint: #9aa1ab;
-  --ds-color-text-on-inverted: #101010;
+  --ds-color-text-on-inverted: #1c1f24;
   --ds-color-text-on-accent: #ffffff;
-  --ds-color-border-default: #3e434b;
+  --ds-color-border-default: #454b54;
   --ds-color-border-strong: #7d848d;
   --ds-color-border-focus: #0074d6;
   --ds-color-accent-default: #0074d6;
@@ -276,21 +276,21 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     color-scheme: dark;
-    --ds-color-bg-default: #101010;
-    --ds-color-bg-subtle: #191c21;
+    --ds-color-bg-default: #1c1f24;
+    --ds-color-bg-subtle: #24282e;
     --ds-color-bg-inverted: #ffffff;
-    --ds-color-surface-default: #191c21;
-    --ds-color-surface-raised: #2a2e34;
-    --ds-color-surface-sunken: #34383f;
-    --ds-color-surface-sunken-hover: #3e434b;
-    --ds-color-surface-glass: rgba(42, 46, 52, 0.8);
-    --ds-color-surface-overlay: #101010a3;
+    --ds-color-surface-default: #272b32;
+    --ds-color-surface-raised: #31363e;
+    --ds-color-surface-sunken: #3a3f47;
+    --ds-color-surface-sunken-hover: #454b54;
+    --ds-color-surface-glass: rgba(49, 54, 62, 0.8);
+    --ds-color-surface-overlay: #1c1f24a3;
     --ds-color-text-default: #ffffff;
     --ds-color-text-muted: #a9afb8;
     --ds-color-text-faint: #9aa1ab;
-    --ds-color-text-on-inverted: #101010;
+    --ds-color-text-on-inverted: #1c1f24;
     --ds-color-text-on-accent: #ffffff;
-    --ds-color-border-default: #3e434b;
+    --ds-color-border-default: #454b54;
     --ds-color-border-strong: #7d848d;
     --ds-color-border-focus: #0074d6;
     --ds-color-accent-default: #0074d6;
