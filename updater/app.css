@@ -3,7 +3,8 @@
 :root {
   --c-bg: #EFF6FF; --c-card: #FFFFFF; --c-fg: #0F172A; --c-muted: #475569; --c-faint: #64748B; --c-border: #BFDBFE; --c-line: #DBE3EE;
   --c-primary: #2563EB; --c-on-primary: #FFFFFF; --c-primary-soft: #DBEAFE;
-  --c-wait: #C2410C; --c-wait-strong: #EA580C; --c-wait-soft: #FFEDD5; --c-on-wait: #FFFFFF;
+  /* "sizni kutyapti" — to'q sariq emas, ko'k (Abdulloh: olovrang bog'liq emas); agent ishlayotgani — ko'k halqa */
+  --c-wait: #1D4ED8; --c-wait-strong: #2563EB; --c-wait-soft: #DBEAFE; --c-on-wait: #FFFFFF;
   --c-done: #15803D; --c-done-soft: #DCFCE7; --c-bad: #DC2626; --c-bad-soft: #FEE2E2;
   --f-head: 'Lexend', system-ui, sans-serif; --f-body: 'Source Sans 3', system-ui, sans-serif;
   --r: 8px; --r-s: 4px;
@@ -14,7 +15,7 @@
   /* A bilan bir xil fon (Abdulloh, 2026-11-17): to'q kulrang, sof qora emas */
   --c-bg: #1c1f24; --c-card: #272b32; --c-fg: #EDEDED; --c-muted: #B3B9C2; --c-faint: #9AA1AB; --c-border: #3A3F47; --c-line: #3A3F47;
   --c-primary: #3B82F6; --c-primary-soft: #1C2433;
-  --c-wait: #FB923C; --c-wait-strong: #EA580C; --c-wait-soft: #2B1D12;
+  --c-wait: #93C5FD; --c-wait-strong: #3B82F6; --c-wait-soft: #1F2B3E;
   --c-done: #4ADE80; --c-done-soft: #15241A; --c-bad: #F87171; --c-bad-soft: #2E1616;
 }
 * { box-sizing: border-box; }
@@ -29,9 +30,11 @@ main { max-width: 640px; margin: 0 auto; padding: var(--s4) var(--s4) calc(var(-
 
 
 /* Ro'yxat */
-.sarlavha { font-size: 24px; font-weight: 700; margin-bottom: var(--s4); }
-.filtr { display: flex; gap: var(--s2); margin-bottom: var(--s4); }
-.filtr button { min-height: 36px; padding: 0 var(--s4); border-radius: 18px; border: 1px solid var(--c-border); background: var(--c-card);
+/* sarlavha va filtr bitta qatorda — tepada bo'sh joy qolmaydi */
+.tepa-qator { display: flex; align-items: center; justify-content: space-between; gap: var(--s2) var(--s3); flex-wrap: wrap; margin-bottom: var(--s4); }
+.sarlavha { font-size: 22px; font-weight: 700; }
+.filtr { display: flex; gap: var(--s2); }
+.filtr button { min-height: 34px; padding: 0 var(--s3); border-radius: 17px; font-size: 14px; border: 1px solid var(--c-border); background: var(--c-card);
   font-weight: 600; cursor: pointer; transition: background-color var(--t), color var(--t); }
 .filtr button[aria-pressed="true"] { background: var(--c-fg); color: var(--c-bg); border-color: var(--c-fg); }
 .filtr b { font-variant-numeric: tabular-nums; }
@@ -39,7 +42,7 @@ main { max-width: 640px; margin: 0 auto; padding: var(--s4) var(--s4) calc(var(-
   padding: var(--s3) var(--s3) var(--s3) 0; margin-bottom: var(--s2); background: var(--c-card); border: 1px solid var(--c-line);
   border-radius: var(--r); cursor: pointer; overflow: hidden; transition: border-color var(--t); }
 .qator:active { border-color: var(--c-primary); }
-.qator .chiziq { align-self: stretch; background: var(--c-primary); }
+.qator .chiziq { align-self: stretch; background: var(--c-faint); }
 .qator.kut .chiziq { background: var(--c-wait-strong); }
 .qator.tayyor .chiziq { background: var(--c-done); }
 .qator.xato .chiziq { background: var(--c-bad); }
@@ -65,8 +68,8 @@ html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; }
 /* .qator .ik (o'ngdagi strelka rangi) belgilarga tushmasin — ular o'z rangini oladi */
 .qator .b-ik .ik { color: inherit; }
 .belgilar li.t .b-ik { background: var(--c-done-soft); border-color: var(--c-done); color: var(--c-done); }
-.belgilar li.h .b-ik { background: var(--c-primary); border-color: var(--c-primary); color: #fff; }
-.belgilar li.h.kut .b-ik { background: var(--c-wait-strong); border-color: var(--c-wait-strong); }
+.belgilar li.h .b-ik { background: var(--c-card); border-color: var(--c-primary); color: var(--c-primary); }
+.belgilar li.h.kut .b-ik { background: var(--c-wait-strong); border-color: var(--c-wait-strong); color: #fff; }
 .b-ok { position: absolute; right: -5px; bottom: -4px; width: 16px; height: 16px; border-radius: 50%; display: grid; place-items: center;
   background: var(--c-done); color: var(--c-card); border: 2px solid var(--c-card); }
 .b-ok .ik { width: 10px; height: 10px; }
@@ -87,7 +90,7 @@ html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; }
   background: var(--c-primary-soft); color: var(--c-primary); margin-bottom: var(--s1); }
 .tepa h1 { font-size: 26px; line-height: 1.2; }
 
-.hero { border-radius: var(--r); padding: var(--s4); margin-bottom: var(--s5); background: var(--c-primary-soft); border: 1px solid var(--c-border); }
+.hero { border-radius: var(--r); padding: var(--s4); margin-bottom: var(--s5); background: var(--c-card); border: 1px solid var(--c-line); }
 .hero.kut { background: var(--c-wait-soft); border-color: transparent; }
 .hero.tayyor { background: var(--c-done-soft); border-color: transparent; }
 .hero.xato { background: var(--c-bad-soft); border-color: transparent; }
@@ -112,8 +115,8 @@ html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; }
   background: var(--c-card); border: 2px solid var(--c-line); color: var(--c-faint); position: relative; z-index: 1; }
 .nuqta .ik { width: 16px; height: 16px; }
 .yq.t .nuqta { background: var(--c-done); border-color: var(--c-done); color: #fff; }
-.yq.h .nuqta { background: var(--c-primary); border-color: var(--c-primary); color: #fff; }
-.yq.h.kut .nuqta { background: var(--c-wait-strong); border-color: var(--c-wait-strong); }
+.yq.h .nuqta { background: var(--c-card); border-color: var(--c-primary); color: var(--c-primary); }
+.yq.h.kut .nuqta { background: var(--c-wait-strong); border-color: var(--c-wait-strong); color: #fff; }
 .yq-bosh { min-height: 32px; display: flex; align-items: center; gap: var(--s2); width: 100%; padding: 0; border: 0; background: none; text-align: left; }
 button.yq-bosh { cursor: pointer; }
 .yq-nom { font: 600 17px var(--f-head); }

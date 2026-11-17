@@ -2,7 +2,7 @@
 // Dizayn: UI UX Pro Max skill — "Logistics/Delivery": posilka kuzatuvidek. Update sahifasida 5 qadam vertikal yo'l bo'lib turadi,
 // har qadamning materiali o'z ichida (Material — PM fayllari, Savollar — savol va javoblar, Ssenariy — kadrli sahnalar).
 // Ma'lumot A bilan bir xil: updater-api.osonacademy.uz/api/ishlar.
-import { IK, PH } from './ikonlar.js?v=20261117'; // ?v= — Telegram eski nusxani keshdan bermasin; fayl o'zgarsa raqamni yangilang
+import { IK, PH } from './ikonlar.js?v=20261117b'; // ?v= — Telegram eski nusxani keshdan bermasin; fayl o'zgarsa raqamni yangilang
 
 const API = 'https://updater-api.osonacademy.uz/api';
 const tg = window.Telegram?.WebApp;
@@ -74,11 +74,11 @@ function royxatChiz() {
   if (!kut.length) S.filtr = 'hammasi';
   const korin = S.filtr === 'kut' ? kut : ishlar;
   ilova.innerHTML = `<main>
-    <h1 class="sarlavha">Update'lar</h1>
+    <div class="tepa-qator"><h1 class="sarlavha">Update'lar</h1>
     <div class="filtr" role="group" aria-label="Saralash">
       <button data-f="kut" aria-pressed="${S.filtr === 'kut'}" ${kut.length ? '' : 'disabled'}>Sizni kutyapti <b>${kut.length}</b></button>
       <button data-f="hammasi" aria-pressed="${S.filtr === 'hammasi'}">Hammasi <b>${ishlar.length}</b></button>
-    </div>
+    </div></div>
     ${korin.map(qatorHtml).join('')}</main>`;
   ilova.querySelectorAll('[data-f]').forEach((b) => (b.onclick = () => { S.filtr = b.dataset.f; chiz(); }));
   ilova.querySelectorAll('[data-ish]').forEach((b) => (b.onclick = () => och(b.dataset.ish)));
