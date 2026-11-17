@@ -68,7 +68,8 @@ html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; }
 /* .qator .ik (o'ngdagi strelka rangi) belgilarga tushmasin — ular o'z rangini oladi */
 .qator .b-ik .ik { color: inherit; }
 .belgilar li.t .b-ik { background: var(--c-done-soft); border-color: var(--c-done); color: var(--c-done); }
-.belgilar li.h .b-ik { background: var(--c-card); border-color: var(--c-primary); color: var(--c-primary); }
+/* hozirgi qadam belgisi doim bir xil (Abdulloh: halqa va to'liq doira ikki xil uslub bo'lib qolgan edi) */
+.belgilar li.h .b-ik { background: var(--c-wait-strong); border-color: var(--c-wait-strong); color: #fff; }
 .belgilar li.h.kut .b-ik { background: var(--c-wait-strong); border-color: var(--c-wait-strong); color: #fff; }
 .b-ok { position: absolute; right: -5px; bottom: -4px; width: 16px; height: 16px; border-radius: 50%; display: grid; place-items: center;
   background: var(--c-done); color: var(--c-card); border: 2px solid var(--c-card); }
@@ -115,7 +116,7 @@ html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; }
   background: var(--c-card); border: 2px solid var(--c-line); color: var(--c-faint); position: relative; z-index: 1; }
 .nuqta .ik { width: 16px; height: 16px; }
 .yq.t .nuqta { background: var(--c-done); border-color: var(--c-done); color: #fff; }
-.yq.h .nuqta { background: var(--c-card); border-color: var(--c-primary); color: var(--c-primary); }
+.yq.h .nuqta { background: var(--c-wait-strong); border-color: var(--c-wait-strong); color: #fff; }
 .yq.h.kut .nuqta { background: var(--c-wait-strong); border-color: var(--c-wait-strong); color: #fff; }
 .yq-bosh { min-height: 32px; display: flex; align-items: center; gap: var(--s2); width: 100%; padding: 0; border: 0; background: none; text-align: left; }
 button.yq-bosh { cursor: pointer; }

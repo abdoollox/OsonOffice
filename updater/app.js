@@ -2,7 +2,7 @@
 // Dizayn: UI UX Pro Max skill — "Logistics/Delivery": posilka kuzatuvidek. Update sahifasida 5 qadam vertikal yo'l bo'lib turadi,
 // har qadamning materiali o'z ichida (Material — PM fayllari, Savollar — savol va javoblar, Ssenariy — kadrli sahnalar).
 // Ma'lumot A bilan bir xil: updater-api.osonacademy.uz/api/ishlar.
-import { IK, PH } from './ikonlar.js?v=20261117b'; // ?v= — Telegram eski nusxani keshdan bermasin; fayl o'zgarsa raqamni yangilang
+import { IK, PH } from './ikonlar.js?v=20261117c'; // ?v= — Telegram eski nusxani keshdan bermasin; fayl o'zgarsa raqamni yangilang
 
 const API = 'https://updater-api.osonacademy.uz/api';
 const tg = window.Telegram?.WebApp;
