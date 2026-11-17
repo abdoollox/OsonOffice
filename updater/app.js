@@ -2,7 +2,7 @@
 // Dizayn: UI UX Pro Max skill — "Logistics/Delivery": posilka kuzatuvidek. Update sahifasida 5 qadam vertikal yo'l bo'lib turadi,
 // har qadamning materiali o'z ichida (Material — PM fayllari, Savollar — savol va javoblar, Ssenariy — kadrli sahnalar).
 // Ma'lumot A bilan bir xil: updater-api.osonacademy.uz/api/ishlar.
-import { IK, PH } from './ikonlar.js?v=20261117d'; // ?v= — Telegram eski nusxani keshdan bermasin; fayl o'zgarsa raqamni yangilang
+import { IK, PH } from './ikonlar.js?v=20261117e'; // ?v= — Telegram eski nusxani keshdan bermasin; fayl o'zgarsa raqamni yangilang
 
 const API = 'https://updater-api.osonacademy.uz/api';
 const tg = window.Telegram?.WebApp;
@@ -22,24 +22,22 @@ tg?.ready(); tg?.expand(); mavzu(); tg?.onEvent?.('themeChanged', mavzu);
 
 const QADAMLAR = [
   { id: 'material', ikon: 'folder-fill', nom: 'Material', ich: ['qabul', 'transkript'], izoh: 'PM funksiya haqida ovoz, video yoki matn yuboradi' },
-  { id: 'savollar', ikon: 'chat-circle-fill', nom: 'Savollar', ich: ['tahlil', 'savollar'], izoh: "Agent tushunmagan joylarini so'raydi" },
-  { id: 'ssenariy', ikon: 'film-slate-fill', nom: 'Ssenariy', ich: ['loyiha-tasdiq'], izoh: 'Video sahnalari va diktor matni — PM tasdiqlaydi' },
+  { id: 'savollar', ikon: 'chat-circle-fill', nom: 'Savollar', ich: ['tahlil'], izoh: "Agent funksiyani tahlil qilib, tushunmagan joylarini so'raydi" },
+  { id: 'ssenariy', ikon: 'film-slate-fill', nom: 'Ssenariy', ich: ['ssenariy', 'loyiha-tasdiq'], izoh: 'Javoblardan keyin video sahnalari va diktor matni yoziladi — PM tasdiqlaydi' },
   { id: 'video', ikon: 'video-camera-fill', nom: 'Video', ich: ['yasash', 'ovoz', 'render', 'tekshiruv', 'tuzatish'], izoh: "Agent videoni yasaydi, PM va QA ko'radi" },
   { id: 'elon', ikon: 'paper-plane-right-fill', nom: "E'lon", ich: ['elon-materiallari', 'elon'], izoh: 'Post tayyorlanadi, ruxsat bilan kanalga chiqadi' },
 ];
-const ssenariyda = (i) => i.navbatdagi === 'savollar' && !!i.loyiha;
 // hozirgi holat → bir jumla; kut: odamdan javob kutilyapti
 function holat(i) {
   const javobsiz = i.savollar.filter((s) => s.javob == null).length;
-  if (ssenariyda(i)) return { matn: `Ssenariy loyihasi tayyor, ${javobsiz} ta savol qoldi`, kut: true, tugma: 'Chatda javob berish' };
   if (!i.navbatdagi) return { matn: "E'lon qilindi", tayyor: true };
   if (i.bosqichlar[i.navbatdagi]?.holat === 'xato') return { matn: "To'xtab qoldi — Abdulloh ko'rib chiqadi", xato: true };
   if (i.topshirildi && i.topshirildi.bosqich === i.navbatdagi) return { matn: `Javob bo'lmadi — mas'uliyat ${i.topshirildi.kimga.join(', ')} ga o'tdi`, xato: true };
   return {
     qabul: { matn: 'Agent materialni qabul qilyapti' },
     transkript: { matn: "Agent materialni o'qiyapti" },
-    tahlil: { matn: 'Agent ssenariy va savollarni tayyorlayapti' },
-    savollar: { matn: `${javobsiz} ta savolga javob kerak`, kut: true, tugma: 'Chatda javob berish' },
+    tahlil: javobsiz ? { matn: `${javobsiz} ta savolga javob kerak`, kut: true, tugma: 'Chatda javob berish' } : { matn: 'Agent funksiyani tahlil qilyapti' },
+    ssenariy: { matn: 'Agent ssenariy yozyapti' },
     'loyiha-tasdiq': { matn: 'Ssenariyni tasdiqlang yoki tuzating', kut: true, tugma: 'Chatda tasdiqlash' },
     yasash: { matn: 'Agent video tayyorlayapti' }, ovoz: { matn: 'Agent video tayyorlayapti' }, render: { matn: 'Agent video tayyorlayapti' },
     tekshiruv: { matn: "Videoni ko'rib, fikr bildiring", kut: true, tugma: 'Chatda fikr bildirish' },
@@ -49,7 +47,6 @@ function holat(i) {
   }[i.navbatdagi] || { matn: 'Ishlanyapti' };
 }
 const qadamHol = (i, q) => {
-  if (ssenariyda(i)) return ['material', 'savollar'].includes(q.id) ? 't' : q.id === 'ssenariy' ? 'h' : '';
   if (q.ich.every((id) => i.bosqichlar[id]?.holat === 'tayyor')) return 't';
   return q.ich.includes(i.navbatdagi) ? 'h' : '';
 };
@@ -100,8 +97,9 @@ function materialHtml(i) {
   }).join('')}</ul>`;
 }
 function savolHtml(i) {
-  if (!i.savollar?.length) return '';
-  return `<ul class="quti ro">${i.savollar.map((s) => `<li class="savol${s.javob != null ? ' j' : ''}">${ik(s.javob != null ? 'circle-check' : 'message-circle')}
+  const why = i.why ? `<details class="ochiq quti" style="padding: var(--s3)"><summary>WHY tahlili — agent qanday tushundi</summary><div class="matn">${esc(i.why)}</div></details>` : '';
+  if (!i.savollar?.length) return why;
+  return why + `<ul class="quti ro">${i.savollar.map((s) => `<li class="savol${s.javob != null ? ' j' : ''}">${ik(s.javob != null ? 'circle-check' : 'message-circle')}
     <div><p>${esc(s.savol)}</p>${s.javob != null ? `<p class="savol-javob"><b>Javob:</b> ${esc(s.javob)}</p>` : ''}</div></li>`).join('')}</ul>`;
 }
 function sahnaHtml(i) {
@@ -111,9 +109,7 @@ function sahnaHtml(i) {
       <div class="kadr-matn"><b>${esc(x.nom)}</b>${x.rasm && x.ekran ? `<p class="kadr-ekran">${esc(x.ekran)}</p>` : ''}${x.diktor ? `<p>«${esc(x.diktor)}»</p>` : ''}</div></article>`).join('')}</div>
     <p class="sanoq">${s.length} sahna — chapga suring</p>` : '';
   const toliq = i.loyiha ? `<details class="ochiq quti" style="padding: var(--s3)"><summary>Ssenariyning to'liq matni</summary><div class="matn">${esc(i.loyiha)}</div></details>` : '';
-  // ssenariy yozilgan, lekin savol qolgan — javobsizlari shu (joriy) qadamda ham ko'rinadi
-  const qolgan = ssenariyda(i) ? savolHtml({ savollar: i.savollar.filter((x) => x.javob == null) }) : '';
-  return qolgan + tasma + toliq;
+  return tasma + toliq;
 }
 const ICHI = { material: materialHtml, savollar: savolHtml, ssenariy: sahnaHtml };
 
