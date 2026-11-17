@@ -11,8 +11,8 @@
   --t: 180ms ease;
 }
 :root[data-theme="dark"] {
-  /* qora tuslar (Abdulloh: ko'k-qora emas, qoraning shade'lari) */
-  --c-bg: #161616; --c-card: #1f1f1f; --c-fg: #EDEDED; --c-muted: #B0B0B0; --c-faint: #8C8C8C; --c-border: #2E2E2E; --c-line: #2E2E2E;
+  /* A bilan bir xil fon (Abdulloh, 2026-11-17): to'q kulrang, sof qora emas */
+  --c-bg: #1c1f24; --c-card: #272b32; --c-fg: #EDEDED; --c-muted: #B3B9C2; --c-faint: #9AA1AB; --c-border: #3A3F47; --c-line: #3A3F47;
   --c-primary: #3B82F6; --c-primary-soft: #1C2433;
   --c-wait: #FB923C; --c-wait-strong: #EA580C; --c-wait-soft: #2B1D12;
   --c-done: #4ADE80; --c-done-soft: #15241A; --c-bad: #F87171; --c-bad-soft: #2E1616;
@@ -67,6 +67,8 @@ html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; }
 .b-ik { position: relative; z-index: 1; width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center;
   background: var(--c-card); border: 2px solid var(--c-line); color: var(--c-faint); }
 .b-ik > .ik { width: 16px; height: 16px; }
+/* .qator .ik (o'ngdagi strelka rangi) belgilarga tushmasin — ular o'z rangini oladi */
+.qator .b-ik .ik { color: inherit; }
 .belgilar li.t .b-ik { background: var(--c-done-soft); border-color: var(--c-done); color: var(--c-done); }
 .belgilar li.h .b-ik { background: var(--c-primary); border-color: var(--c-primary); color: #fff; }
 .belgilar li.h.kut .b-ik { background: var(--c-wait-strong); border-color: var(--c-wait-strong); }
