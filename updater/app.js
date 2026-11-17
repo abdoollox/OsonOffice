@@ -2,7 +2,7 @@
 // Dizayn: UI UX Pro Max skill — "Logistics/Delivery": posilka kuzatuvidek. Update sahifasida 5 qadam vertikal yo'l bo'lib turadi,
 // har qadamning materiali o'z ichida (Material — PM fayllari, Savollar — savol va javoblar, Ssenariy — kadrli sahnalar).
 // Ma'lumot A bilan bir xil: updater-api.osonacademy.uz/api/ishlar.
-import { IK, PH } from './ikonlar.js?v=20261117c'; // ?v= — Telegram eski nusxani keshdan bermasin; fayl o'zgarsa raqamni yangilang
+import { IK, PH } from './ikonlar.js?v=20261117d'; // ?v= — Telegram eski nusxani keshdan bermasin; fayl o'zgarsa raqamni yangilang
 
 const API = 'https://updater-api.osonacademy.uz/api';
 const tg = window.Telegram?.WebApp;
@@ -53,7 +53,7 @@ const qadamHol = (i, q) => {
   if (q.ich.every((id) => i.bosqichlar[id]?.holat === 'tayyor')) return 't';
   return q.ich.includes(i.navbatdagi) ? 'h' : '';
 };
-const qadamVaqt = (i, q) => q.ich.map((id) => i.bosqichlar[id]?.vaqt).filter(Boolean).sort().at(-1)?.slice(5, 16).replace('-', '.') || '';
+const qadamVaqt = (i, q) => sana(q.ich.map((id) => i.bosqichlar[id]?.vaqt).filter(Boolean).sort().at(-1));
 const mahsulot = (m) => (m === 'kassa' ? 'Oson Kassa' : m === 'price' ? 'Oson Price' : '');
 const nomi = (i) => i.sarlavha || i.nom;
 const turi = (h) => (h.kut ? 'kut' : h.tayyor ? 'tayyor' : h.xato ? 'xato' : '');
@@ -85,13 +85,18 @@ function royxatChiz() {
 }
 
 // ── Update sahifasi: qadamlar ichidagi narsalar ──
+const OYLAR = ['yanvar', 'fevral', 'mart', 'aprel', 'may', 'iyun', 'iyul', 'avgust', 'sentabr', 'oktabr', 'noyabr', 'dekabr'];
+const sana = (v) => { const m = String(v || '').match(/^\d{4}-(\d{2})-(\d{2})[ T](\d{2}:\d{2})/); return m ? `${+m[2]}-${OYLAR[+m[1] - 1]}, ${m[3]}` : ''; };
 function materialHtml(i) {
   if (!i.materiallar?.length) return '';
-  return `<ul class="quti ro">${i.materiallar.map((m) => {
+  return `<ul class="materiallar">${i.materiallar.map((m) => {
     const nom = { video: 'Video', ovoz: 'Ovozli xabar', rasm: 'Rasm' }[m.tur] || 'Matn';
-    const ichi = `${ik({ video: 'video', ovoz: 'mic', rasm: 'image' }[m.tur] || 'file-text')}<b>${nom}</b><span>${esc(m.vaqt.slice(5))}${m.tur !== 'matn' ? ` · ${m.mb} MB` : ''}</span>`;
-    return `<li>${m.havola ? `<a class="mat" href="${esc(m.havola)}" data-tg>${ichi}${ik('chevron-right')}</a>` : `<div class="mat">${ichi}</div>`}
-      ${m.matn ? `<details class="ochiq"><summary>${m.tur === 'matn' ? 'Matnni ochish' : 'Aytilganlar'}</summary><div class="matn">${esc(m.matn)}</div></details>` : ''}</li>`;
+    const hajm = m.tur !== 'matn' ? ` · ${String(m.mb).replace('.', ',')} MB` : '';
+    return `<li class="mk">
+      <div class="mk-bosh"><span class="mk-ik">${ik({ video: 'video', ovoz: 'mic', rasm: 'image' }[m.tur] || 'file-text')}</span>
+        <div class="mk-nom"><b>${nom}</b><span>${esc(sana(m.vaqt))}${hajm}</span></div>
+        ${m.havola ? `<a class="mk-tg" href="${esc(m.havola)}" data-tg aria-label="${nom} — Telegram guruhda ochish">${ik('send-horizontal')}Ochish</a>` : ''}</div>
+      ${m.matn ? `<details class="mk-matn"><summary>${m.tur === 'matn' ? 'Matnni o\'qish' : 'Aytilganlarni o\'qish'}${ik('chevron-right')}</summary><div class="matn">${esc(m.matn)}</div></details>` : ''}</li>`;
   }).join('')}</ul>`;
 }
 function savolHtml(i) {
