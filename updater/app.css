@@ -138,3 +138,10 @@ a.mat-bosh.tg .ik:last-child { color: var(--ds-color-text-faint); }
 .sahna-rasm[role=button] { cursor: zoom-in; }
 .sahna.katta { grid-template-columns: 1fr; }
 .sahna.katta .sahna-rasm { cursor: zoom-out; }
+
+/* A | B almashtirgich — solishtirish davrida */
+.ab { display: flex; justify-content: flex-end; margin-bottom: var(--ds-space-2); }
+.ab div { display: inline-flex; border-radius: var(--ds-radius-control); overflow: hidden; background: var(--ds-color-surface-default); }
+.ab a, .ab span { min-width: 44px; min-height: 32px; display: grid; place-items: center; font-weight: var(--ds-font-weight-semibold);
+  font-size: var(--ds-font-size-sm); text-decoration: none; color: var(--ds-color-text-muted); }
+.ab span { background: var(--ds-color-accent-default); color: var(--ds-color-text-on-accent); }

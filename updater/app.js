@@ -56,6 +56,8 @@ const qadamHol = (i, q) => {
 };
 const mahsulot = (m) => (m === 'kassa' ? 'Oson Kassa' : m === 'price' ? 'Oson Price' : '');
 const nomi = (i) => i.sarlavha || i.nom;
+// A | B — solishtirish davrida (B: UI UX Pro Max varianti, b/)
+const ab = () => `<nav class="ab" aria-label="Variant"><div><span aria-current="page">A</span><a href="b/?ish=${encodeURIComponent(S.ish || '')}">B</a></div></nav>`;
 const ekran = (ikon, sarlavha, matn, cls = '') => `<div class="ekran ${cls}"><div class="tile">${ik(ikon)}</div><b>${esc(sarlavha)}</b><p>${esc(matn)}</p></div>`;
 
 // 5 qadamli kuzatuv chizig'i (gorizontal — kartochkada, katta — update sahifasida)
@@ -79,9 +81,9 @@ function kartaHtml(i) {
 }
 function ishlarChiz() {
   const ishlar = S.data.ishlar;
-  if (!ishlar.length) return (ilova.innerHTML = `<main>${ekran('inbox', "Hali update yo'q", "PM chatda yangi funksiya haqida yozsa, u shu yerda chiqadi.")}</main>`);
+  if (!ishlar.length) return (ilova.innerHTML = `<main>${S.data ? ab() : ""}${ekran('inbox', "Hali update yo'q", "PM chatda yangi funksiya haqida yozsa, u shu yerda chiqadi.")}</main>`);
   const kut = ishlar.filter((i) => jumla(i).kerak), qolgan = ishlar.filter((i) => !jumla(i).kerak);
-  ilova.innerHTML = `<main>
+  ilova.innerHTML = `<main>${S.data ? ab() : ""}
     <h1>Update'lar</h1>
     ${kut.length ? `<h2>Sizni kutyapti</h2>${kut.map(kartaHtml).join('')}` : ''}
     ${qolgan.length ? `<h2>${kut.length ? 'Jarayonda' : 'Hammasi jarayonda'}</h2>${qolgan.map(kartaHtml).join('')}` : ''}
@@ -95,7 +97,7 @@ function ishChiz() {
   if (!i) { S.ish = null; return chiz(); }
   const j = jumla(i);
   const orqa = S.royxatdan ? `<button class="orqa" id="orqa" aria-label="Hamma update'lar">${ik('arrow-left')}</button>` : '';
-  ilova.innerHTML = `<main>
+  ilova.innerHTML = `<main>${S.data ? ab() : ""}
     <div class="bosh">${orqa}<div><h1>${esc(nomi(i))}</h1><p class="izoh">${mahsulot(i.mahsulot)}</p></div></div>
     <section class="holat-blok ${j.kerak ? 'kerak' : ''}" aria-live="polite">
       ${kuzatuv(i, true)}
@@ -150,18 +152,18 @@ async function ol(birinchi) {
     if (ozgardi) { const y = scrollY; chiz(); if (!birinchi) scrollTo(0, y); }
   } catch (e) {
     if (!birinchi && S.data) return;
-    ilova.innerHTML = `<main>${e.kod === 403 ? ekran('lock', "Ruxsat yo'q", "Sizga hali ruxsat berilmagan. Abdullohdan so'rang.")
+    ilova.innerHTML = `<main>${S.data ? ab() : ""}${e.kod === 403 ? ekran('lock', "Ruxsat yo'q", "Sizga hali ruxsat berilmagan. Abdullohdan so'rang.")
       : e.kod === 401 ? ekran('lock', 'Telegram orqali oching', "Sahifa Oson Updater xabaridagi «Holatni ko'rish» tugmasi bilan ochiladi.")
       : ekran('circle-alert', "Ulanib bo'lmadi", 'Internetni tekshirib, sahifani qayta oching.')}</main>`;
   }
 }
 
 if (!INIT) {
-  ilova.innerHTML = `<main>${ekran('lock', 'Telegram orqali oching', "Sahifa Oson Updater xabaridagi «Holatni ko'rish» tugmasi bilan ochiladi.")}</main>`;
+  ilova.innerHTML = `<main>${S.data ? ab() : ""}${ekran('lock', 'Telegram orqali oching', "Sahifa Oson Updater xabaridagi «Holatni ko'rish» tugmasi bilan ochiladi.")}</main>`;
 } else {
   // qaysi update bilan ochildi: guruhdagi tugma (startapp) yoki bot chatidagi tugma (?ish=)
-  S.ish = tg?.initDataUnsafe?.start_param || new URLSearchParams(location.search).get('ish') || null;
-  ilova.innerHTML = `<main><h1>Update'lar</h1><div class="skelet"></div><div class="skelet"></div></main>`;
+  { const q = new URLSearchParams(location.search); S.ish = q.has('ish') ? q.get('ish') || null : tg?.initDataUnsafe?.start_param || null; }
+  ilova.innerHTML = `<main>${S.data ? ab() : ""}<h1>Update'lar</h1><div class="skelet"></div><div class="skelet"></div></main>`;
   ol(true);
   setInterval(() => ol(false), 10000);
 }
