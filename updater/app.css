@@ -168,7 +168,7 @@ a.mat .ik:last-child { color: var(--c-faint); width: 16px; height: 16px; }
 .tasma { display: flex; gap: var(--s3); overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: var(--s2);
   margin-right: calc(-1 * var(--s4)); padding-right: var(--s4); scrollbar-width: none; }
 .tasma::-webkit-scrollbar { display: none; }
-.kadr { flex: 0 0 82%; scroll-snap-align: start; background: var(--c-card); border: 1px solid var(--c-line); border-radius: var(--r); overflow: hidden; }
+.kadr { flex: 0 0 min(66%, 260px); scroll-snap-align: start; background: var(--c-card); border: 1px solid var(--c-line); border-radius: var(--r); overflow: hidden; }
 /* video 1:1 — kadr ham kvadrat (Abdulloh, 2026-11-19) */
 .kadr-rasm { aspect-ratio: 1 / 1; position: relative; background: var(--c-primary-soft); display: grid; place-items: center; }
 .kadr-rasm img { width: 100%; height: 100%; object-fit: cover; display: block; }
@@ -178,8 +178,8 @@ a.mat .ik:last-child { color: var(--c-faint); width: 16px; height: 16px; }
 .kadr-rasm.eskiz.muammo { background: var(--c-bad-soft); }
 .kadr-rasm.eskiz.yechim { background: var(--c-done-soft); }
 .e-ikonlar { display: flex; align-items: center; gap: var(--s3); }
-.e-ik { width: 48px; height: 48px; display: grid; place-items: center; color: var(--c-primary); }
-.e-ik.bosh { width: 88px; height: 88px; border-radius: 50%; background: var(--c-card); }
+.e-ik { width: 40px; height: 40px; display: grid; place-items: center; color: var(--c-primary); }
+.e-ik.bosh { width: 72px; height: 72px; border-radius: 50%; background: var(--c-card); }
 .e-ik svg { width: 60%; height: 60%; }
 .e-ik:not(.bosh) svg { width: 100%; height: 100%; opacity: .85; }
 .eskiz.muammo .e-ik { color: var(--c-bad); }
