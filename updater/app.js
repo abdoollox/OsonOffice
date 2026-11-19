@@ -2,7 +2,7 @@
 // Dizayn: UI UX Pro Max skill — "Logistics/Delivery": posilka kuzatuvidek. Update sahifasida 5 qadam vertikal yo'l bo'lib turadi,
 // har qadamning materiali o'z ichida (Material — PM fayllari, Savollar — savol va javoblar, Ssenariy — kadrli sahnalar).
 // Ma'lumot A bilan bir xil: updater-api.osonacademy.uz/api/ishlar.
-import { IK, PH } from './ikonlar.js?v=20261119d'; // ?v= — Telegram eski nusxani keshdan bermasin; fayl o'zgarsa raqamni yangilang
+import { IK, PH } from './ikonlar.js?v=20261119e'; // ?v= — Telegram eski nusxani keshdan bermasin; fayl o'zgarsa raqamni yangilang
 
 const API = 'https://updater-api.osonacademy.uz/api';
 const tg = window.Telegram?.WebApp;
@@ -24,8 +24,10 @@ const QADAMLAR = [
   { id: 'material', ikon: 'folder-fill', nom: 'Material', ich: ['qabul', 'transkript'], izoh: 'PM funksiya haqida ovoz, video yoki matn yuboradi' },
   { id: 'savollar', ikon: 'chat-circle-fill', nom: 'Savollar', ich: ['tahlil'], izoh: "Agent funksiyani tahlil qilib, tushunmagan joylarini so'raydi" },
   { id: 'ssenariy', ikon: 'film-slate-fill', nom: 'Ssenariy', ich: ['ssenariy', 'loyiha-tasdiq'], izoh: 'Javoblardan keyin video sahnalari va diktor matni yoziladi — PM tasdiqlaydi' },
-  { id: 'video', ikon: 'video-camera-fill', nom: 'Video', ich: ['yasash', 'ovoz', 'render', 'tekshiruv', 'tuzatish'], izoh: "Agent videoni yasaydi, PM va QA ko'radi" },
-  { id: 'elon', ikon: 'paper-plane-right-fill', nom: "E'lon", ich: ['elon-materiallari', 'elon'], izoh: 'Post tayyorlanadi, ruxsat bilan kanalga chiqadi' },
+  { id: 'video', ikon: 'video-camera-fill', nom: 'Promo', ich: ['yasash', 'ovoz', 'render', 'tekshiruv', 'tuzatish'], izoh: "Agent 1 daqiqalik promo video yasaydi, PM va QA ko'radi" },
+  { id: 'uzun', ikon: 'monitor-play-fill', nom: 'Uzun video', ich: ['uzun-yasash', 'uzun-ovoz', 'uzun-render', 'uzun-tekshiruv', 'uzun-tuzatish'], izoh: "Batafsil video (texnik dars) — PM va QA ko'radi" },
+  { id: 'elon', ikon: 'paper-plane-right-fill', nom: "E'lon", ich: ['youtube', 'elon-materiallari', 'elon'], izoh: "Uzun video YouTube'ga, promo post kanalga — ruxsat bilan" },
+  { id: 'oqitish', ikon: 'graduation-cap-fill', nom: "O'qitish", ich: ['test', 'lms'], izoh: "Uzun video va test Exode'ga — xodimlar o'rganadi" },
 ];
 // hozirgi holat → bir jumla; kut: odamdan javob kutilyapti
 function holat(i) {
@@ -40,14 +42,21 @@ function holat(i) {
     ssenariy: { matn: 'Agent ssenariy yozyapti' },
     'loyiha-tasdiq': { matn: 'Ssenariyni tasdiqlang yoki tuzating', kut: true, tugma: 'Chatda tasdiqlash' },
     yasash: { matn: 'Agent video tayyorlayapti' }, ovoz: { matn: 'Agent video tayyorlayapti' }, render: { matn: 'Agent video tayyorlayapti' },
-    tekshiruv: { matn: "Videoni ko'rib, fikr bildiring", kut: true, tugma: 'Chatda fikr bildirish' },
+    tekshiruv: { matn: "Promo videoni ko'rib, fikr bildiring", kut: true, tugma: 'Chatda fikr bildirish' },
     tuzatish: { matn: "Agent izohlar bo'yicha tuzatyapti" },
-    'elon-materiallari': { matn: 'Agent post va matn tayyorlayapti' },
+    'uzun-yasash': { matn: 'Agent uzun video tayyorlayapti' }, 'uzun-ovoz': { matn: 'Agent uzun video tayyorlayapti' }, 'uzun-render': { matn: 'Agent uzun video tayyorlayapti' },
+    'uzun-tekshiruv': { matn: "Uzun videoni ko'rib, fikr bildiring", kut: true, tugma: 'Chatda fikr bildirish' },
+    'uzun-tuzatish': { matn: "Agent izohlar bo'yicha tuzatyapti" },
+    youtube: { matn: "Agent uzun videoni YouTube'ga joylayapti" },
+    'elon-materiallari': { matn: 'Agent post va blog tayyorlayapti' },
+    test: { matn: 'Test savollarini tekshirish kerak', kut: true, tugma: 'Chatda tasdiqlash' },
+    lms: { matn: "Agent video va testni Exode'ga joylayapti" },
     elon: { matn: "E'longa ruxsat bering", kut: true, tugma: 'Chatda ruxsat berish' },
   }[i.navbatdagi] || { matn: 'Ishlanyapti' };
 }
 const qadamHol = (i, q) => {
-  if (q.ich.every((id) => i.bosqichlar[id]?.holat === 'tayyor')) return 't';
+  if (q.ich.every((id) => i.bosqichlar[id]?.holat === 'otkazildi')) return 'o'; // bu ishga tegishli emas
+  if (q.ich.every((id) => ['tayyor', 'otkazildi'].includes(i.bosqichlar[id]?.holat))) return 't';
   return q.ich.includes(i.navbatdagi) ? 'h' : '';
 };
 const qadamVaqt = (i, q) => sana(q.ich.map((id) => i.bosqichlar[id]?.vaqt).filter(Boolean).sort().at(-1));
@@ -62,7 +71,7 @@ function qatorHtml(i) {
   return `<button class="qator ${turi(h)}" data-ish="${esc(i.nom)}"><span class="chiziq"></span>
     <div><div class="qator-nom">${esc(nomi(i))} <span class="qator-dastur">· ${mahsulot(i.mahsulot)}</span></div>
       <p class="qator-holat">${esc(h.matn)}</p>
-      <ol class="belgilar" aria-label="Qadamlar">${QADAMLAR.map((q) => { const hol = qadamHol(i, q); return `<li class="${hol}${hol === 'h' && h.kut ? ' kut' : ''}"><span class="b-ik">${ikf(q.ikon)}${hol === 't' ? `<span class="b-ok">${ikf('check-bold')}</span>` : ''}</span><span class="b-nom">${q.nom}</span><span class="sr">${hol === 't' ? ' — bajarildi' : hol === 'h' ? ' — hozir' : ''}</span></li>`; }).join('')}</ol></div>${ik('chevron-right')}</button>`;
+      <ol class="belgilar" aria-label="Qadamlar">${QADAMLAR.map((q) => { const hol = qadamHol(i, q); return `<li class="${hol}${hol === 'h' && h.kut ? ' kut' : ''}"><span class="b-ik">${ikf(q.ikon)}${hol === 't' ? `<span class="b-ok">${ikf('check-bold')}</span>` : ''}</span><span class="b-nom">${q.nom}</span><span class="sr">${hol === 't' ? ' — bajarildi' : hol === 'h' ? ' — hozir' : hol === 'o' ? ' — kerak emas' : ''}</span></li>`; }).join('')}</ol></div>${ik('chevron-right')}</button>`;
 }
 function royxatChiz() {
   const ishlar = S.data.ishlar;
@@ -130,7 +139,7 @@ function ishChiz() {
     <section class="hero ${turi(h)}" aria-live="polite">
       <div class="hero-yorliq">${ik(h.kut ? 'clock' : h.tayyor ? 'circle-check' : h.xato ? 'circle-exclamation-point' : 'loader-circle')}${yorliq}</div>
       <p class="hero-matn">${esc(h.matn)}</p>
-      ${joriy ? `<p class="hero-qadam">${QADAMLAR.indexOf(joriy) + 1}-qadam / 5 · ${joriy.nom}</p>` : ''}
+      ${joriy ? `<p class="hero-qadam">${QADAMLAR.indexOf(joriy) + 1}-qadam / ${QADAMLAR.length} · ${joriy.nom}</p>` : ''}
       ${h.kut ? `<button class="tugma" id="chat">${ik('message-circle')}${esc(h.tugma)}</button>` : ''}
     </section>
     <ol class="yol" aria-label="Qadamlar">${QADAMLAR.map((q, n) => {
@@ -139,12 +148,12 @@ function ishChiz() {
       const ochiq = hol === 'h' || S.ochiq.has(q.id);
       const bosh = `<span class="yq-nom">${q.nom}</span><span class="yq-vaqt">${hol === 't' ? esc(qadamVaqt(i, q)) : hol === 'h' ? 'hozir' : ''}</span>`;
       return `<li class="yq ${hol}${hol === 'h' && h.kut ? ' kut' : ''}" ${hol === 'h' ? 'aria-current="step"' : ''}>
-        <span class="nuqta">${hol === 't' ? ik('check') : n + 1}</span>
+        <span class="nuqta">${hol === 't' ? ik('check') : hol === 'o' ? '–' : n + 1}</span>
         ${ichi && hol === 't' ? `<button class="yq-bosh" data-q="${q.id}" aria-expanded="${ochiq}">${bosh}${ik('chevron-right')}</button>` : `<div class="yq-bosh">${bosh}</div>`}
-        ${ichi && ochiq ? `<div class="yq-ich">${ichi}</div>` : hol === '' ? `<p class="yq-izoh">${q.izoh}</p>` : ''}
+        ${ichi && ochiq ? `<div class="yq-ich">${ichi}</div>` : hol === '' ? `<p class="yq-izoh">${q.izoh}</p>` : hol === 'o' ? '<p class="yq-izoh">Bu update uchun kerak emas</p>' : ''}
       </li>`;
     }).join('')}</ol>
-    ${S.data.ega ? `<details class="ichki" id="ichki" ${S.ichkiOchiq ? 'open' : ''}><summary>${ik('list-checks')}Jamoa uchun: 12 ichki bosqich</summary>
+    ${S.data.ega ? `<details class="ichki" id="ichki" ${S.ichkiOchiq ? 'open' : ''}><summary>${ik('list-checks')}Jamoa uchun: ${S.data.bosqichlar.length} ichki bosqich</summary>
       <ol>${S.data.bosqichlar.map((b) => { const s = i.bosqichlar[b.id]; return `<li class="${s?.holat === 'tayyor' ? 't' : b.id === i.navbatdagi ? 'j' : ''}">${esc(b.nomi)}${s?.vaqt ? ` · ${esc(s.vaqt.slice(5, 16))}` : ''}</li>`; }).join('')}</ol></details>` : ''}
   </main>`;
   document.getElementById('orqa')?.addEventListener('click', royxatga);
