@@ -2,7 +2,7 @@
 // Dizayn: UI UX Pro Max skill — "Logistics/Delivery": posilka kuzatuvidek. Update sahifasida 5 qadam vertikal yo'l bo'lib turadi,
 // har qadamning materiali o'z ichida (Material — PM fayllari, Savollar — savol va javoblar, Ssenariy — kadrli sahnalar).
 // Ma'lumot A bilan bir xil: updater-api.osonacademy.uz/api/ishlar.
-import { IK, PH } from './ikonlar.js?v=20261119a'; // ?v= — Telegram eski nusxani keshdan bermasin; fayl o'zgarsa raqamni yangilang
+import { IK, PH } from './ikonlar.js?v=20261119b'; // ?v= — Telegram eski nusxani keshdan bermasin; fayl o'zgarsa raqamni yangilang
 
 const API = 'https://updater-api.osonacademy.uz/api';
 const tg = window.Telegram?.WebApp;
@@ -102,11 +102,17 @@ function savolHtml(i) {
   return why + `<ul class="quti ro">${i.savollar.map((s) => `<li class="savol${s.javob != null ? ' j' : ''}">${ik(s.javob != null ? 'circle-check' : 'message-circle')}
     <div><p>${esc(s.savol)}</p>${s.javob != null ? `<p class="savol-javob"><b>Javob:</b> ${esc(s.javob)}</p>` : ''}</div></li>`).join('')}</ul>`;
 }
+// ikonkali eskiz: 1–3 ta Phosphor belgi (birinchisi katta) va ekranda chiqadigan qisqa yozuv
+const eskizHtml = (x) => {
+  const e = x.eskiz;
+  if (!e?.ikonlar?.length) return `<p>${esc(x.ekran)}</p>`;
+  return `<div class="e-ikonlar">${e.ikonlar.map((k, n) => `<span class="e-ik${n ? '' : ' bosh'}"><svg viewBox="0 0 256 256" aria-hidden="true">${k.svg}</svg></span>`).join('')}</div>${e.yozuv ? `<p class="e-yozuv">${esc(e.yozuv)}</p>` : ''}`;
+};
 function sahnaHtml(i) {
   const s = i.sahnalar || [];
   const tasma = s.length ? `<div class="tasma" role="list" aria-label="Sahnalar">${s.map((x) => `<article class="kadr" role="listitem">
-      <div class="kadr-rasm">${x.rasm ? `<img src="${x.rasm}" alt="" loading="lazy">` : `<p>${esc(x.ekran)}</p>`}<span class="kadr-n">${esc(x.n)}</span></div>
-      <div class="kadr-matn"><b>${esc(x.nom)}</b>${x.rasm && x.ekran ? `<p class="kadr-ekran">${esc(x.ekran)}</p>` : ''}${x.diktor ? `<p>«${esc(x.diktor)}»</p>` : ''}</div></article>`).join('')}</div>
+      <div class="kadr-rasm${x.eskiz?.ikonlar?.length ? ` eskiz ${x.eskiz.ton}` : ''}">${x.rasm ? `<img src="${x.rasm}" alt="" loading="lazy">` : eskizHtml(x)}<span class="kadr-n">${esc(x.n)}</span></div>
+      <div class="kadr-matn"><b>${esc(x.nom)}</b>${(x.rasm || x.eskiz?.ikonlar?.length) && x.ekran ? `<p class="kadr-ekran">${esc(x.ekran)}</p>` : ''}${x.diktor ? `<p>«${esc(x.diktor)}»</p>` : ''}</div></article>`).join('')}</div>
     <p class="sanoq">${s.length} sahna — chapga suring</p>` : '';
   const toliq = i.loyiha ? `<details class="ochiq quti" style="padding: var(--s3)"><summary>Ssenariyning to'liq matni</summary><div class="matn">${esc(i.loyiha)}</div></details>` : '';
   return tasma + toliq;

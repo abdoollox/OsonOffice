@@ -172,6 +172,19 @@ a.mat .ik:last-child { color: var(--c-faint); width: 16px; height: 16px; }
 .kadr-rasm { aspect-ratio: 16 / 9; position: relative; background: var(--c-primary-soft); display: grid; place-items: center; }
 .kadr-rasm img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .kadr-rasm p { padding: var(--s3) var(--s4); text-align: center; color: var(--c-muted); font-size: 15px; }
+/* ikonkali eskiz — video kadri o'rniga: ton rangidagi fon, katta belgi(lar), ekrandagi yozuv */
+.kadr-rasm.eskiz { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--s3); padding: var(--s3); }
+.kadr-rasm.eskiz.muammo { background: var(--c-bad-soft); }
+.kadr-rasm.eskiz.yechim { background: var(--c-done-soft); }
+.e-ikonlar { display: flex; align-items: center; gap: var(--s3); }
+.e-ik { width: 40px; height: 40px; display: grid; place-items: center; color: var(--c-primary); }
+.e-ik.bosh { width: 64px; height: 64px; border-radius: 50%; background: var(--c-card); }
+.e-ik svg { width: 60%; height: 60%; }
+.e-ik:not(.bosh) svg { width: 100%; height: 100%; opacity: .85; }
+.eskiz.muammo .e-ik { color: var(--c-bad); }
+.eskiz.yechim .e-ik { color: var(--c-done); }
+.kadr-rasm .e-yozuv { padding: 4px var(--s3); max-width: 90%; border-radius: var(--r-s); background: var(--c-card); color: var(--c-fg);
+  font: 600 14px/1.3 var(--f-head); text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .kadr-n { position: absolute; left: var(--s2); top: var(--s2); min-width: 24px; height: 24px; padding: 0 6px; border-radius: 12px; display: grid; place-items: center;
   font: 600 13px var(--f-head); background: var(--c-fg); color: var(--c-bg); font-variant-numeric: tabular-nums; }
 .kadr-matn { padding: var(--s3); }
