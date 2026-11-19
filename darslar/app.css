@@ -118,3 +118,7 @@ h2 { font-size: 16px; font-weight: 600; margin-bottom: var(--s3); }
 .fb-matn { margin-top: var(--s1); }
 .fb-natija { margin-top: var(--s1); color: var(--c-muted); font-size: 14px; }
 .fb.bajarildi .fb-matn { color: var(--c-muted); }
+.korish { display: inline-flex; align-items: center; min-height: 36px; margin-top: var(--s2); padding: 0 var(--s3); border-radius: 18px;
+  background: var(--c-primary-soft); color: var(--c-primary); font-weight: 600; font-size: 14px; }
+.korish:active { opacity: .7; }
+.izoh-kichik { color: var(--c-faint); font-size: 13px; margin-top: var(--s2); }

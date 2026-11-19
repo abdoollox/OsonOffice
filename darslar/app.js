@@ -4,7 +4,7 @@ const tg = window.Telegram?.WebApp?.initData ? window.Telegram.WebApp : null; //
 const ilova = document.getElementById('ilova');
 const BOSQICH = [
   ['ssenariy', 'Ssenariy'], ['sahna', 'Sahna'], ['promo', 'Promo'], ['texnik', 'Texnik'],
-  ['ovoz', 'Ovoz'], ['yigish', "Yig'ish"], ['tasdiq', "PM tasdig'i"],
+  ['ovoz', 'Ovoz'], ['yigish', "Yig'ish"], ['tasdiq', "Abdulloh tasdig'i"],
 ];
 const HOLAT = { t: 'Tayyor', j: 'Jarayonda', k: "To'xtab turibdi", '-': 'Kerak emas', '': 'Rejada' };
 const FB_HOLAT = { bajarildi: 'Bajarildi', jarayonda: 'Jarayonda', kutilyapti: 'Kutilyapti' };
@@ -24,6 +24,17 @@ if (tg) {
 } else if (matchMedia('(prefers-color-scheme: dark)').matches) document.documentElement.setAttribute('data-theme', 'dark');
 
 const vaqtYoz = (s) => { const t = new Date(new Date(s).getTime() + 5 * 3600e3).toISOString(); return t.slice(8, 10) + '.' + t.slice(5, 7) + ' ' + t.slice(11, 16); }; // Toshkent vaqti
+// «Ko'rish»: video va ssenariy loyihasi — bot shu kompyuterdan chatga yuboradi (deep link /start v_<qism>_<1-17>); ssenariy bazasida bori — sahifada
+const BOT = 'https://t.me/osonprojects_bot?start=';
+const KORISH = { ssenariy: 'ssenariy', sahna: 'sahna', promo: 'promo', texnik: 'texnik', yigish: 'toliq' };
+function korishHavola(d, k) {
+  const v = d[k] ?? '';
+  if (!KORISH[k] || (v !== 't' && v !== 'j')) return '';
+  const kod = d.id.replace('.', '-');
+  if (k === 'ssenariy' && d.ssenariyHolat) return `<a class="korish" data-tashqi href="https://office.osonacademy.uz/ssenariy/#d${kod}">Ssenariyni ochish</a>`;
+  const nom = k === 'yigish' ? "To'liq darsni ko'rish" : k === 'ssenariy' ? 'Ssenariyni olish' : "Ko'rish";
+  return `<a class="korish" data-bot href="${BOT}v_${KORISH[k]}_${kod}">▶ ${nom}</a>`;
+}
 const darsNomi = (d) => `${d.id} ${d.nomi}`;
 const darsIdlar = (s) => String(s || '').split(/[,;\s]+/).filter((x) => /^\d+\.\d+$/.test(x));
 function guruh(d) {
@@ -41,7 +52,7 @@ const ochiqFb = (d) => fidbeklar(d).filter((f) => f.holat !== 'bajarildi');
 function holatJumla(d) {
   const g = guruh(d);
   if (g === 'tayyor') return `Tayyor${d.tayyor_sana ? ' · ' + sana(d.tayyor_sana) : ''}`;
-  if (g === 'pm') return "To'liq yig'ilgan · PM tasdig'ida";
+  if (g === 'pm') return "To'liq yig'ilgan · Abdulloh tasdig'ida";
   if (g === 'rejada') return `Rejada · ${sana(d.reja_sana)}`;
   const h = hozirgi(d);
   return h ? `${h[1]} — ${HOLAT[d[h[0]]].toLowerCase()}` : 'Jarayonda';
@@ -100,7 +111,7 @@ function royxat() {
   for (const d of D.darslar) g[guruh(d)].push(d);
   const kutKr = D.kreditlar.filter((k) => k.holat === 'kutilyapti');
   const ochiq = D.fidbeklar.filter((f) => f.holat !== 'bajarildi');
-  const tablar = [['ishda', 'Ishda', g.ishda.length], ['pm', "PM'da", g.pm.length], ['tayyor', 'Tayyor', g.tayyor.length],
+  const tablar = [['ishda', 'Ishda', g.ishda.length], ['pm', 'Tasdiqda', g.pm.length], ['tayyor', 'Tayyor', g.tayyor.length],
     ['rejada', 'Rejada', g.rejada.length], ['fidbek', 'Fidbek', ochiq.length]];
   let tana;
   if (tab === 'fidbek') {
@@ -113,7 +124,7 @@ function royxat() {
   ilova.innerHTML = `<main>
     <header class="tepa">
       <h1>Oson Kassa kursi</h1>
-      <p class="osti">${D.darslar.length} dars · tayyor ${g.tayyor.length} · PM'da ${g.pm.length} · ishda ${g.ishda.length}</p>
+      <p class="osti">${D.darslar.length} dars · tayyor ${g.tayyor.length} · tasdiqda ${g.pm.length} · ishda ${g.ishda.length}</p>
     </header>
     ${kutKr.length ? `<section class="kutish">
       <h2>Ruxsatingiz kerak</h2>
@@ -149,7 +160,7 @@ function dars(id) {
     if (k === 'ssenariy' && d.muammo) ich = `<p class="q-izoh">${esc(d.muammo)}</p>`;
     return `<li class="qadam ${v === 't' ? 't' : v === 'j' ? 'j' : v === 'k' ? 'k' : v === '-' ? 'yoq' : ''}${h && h[0] === k ? ' hozir' : ''}">
       <span class="nuqta">${v === 't' ? ok : ''}</span>
-      <div class="q-ich"><div class="q-nom">${nom} <span class="q-holat">${HOLAT[v] || v}</span></div>${ich}</div>
+      <div class="q-ich"><div class="q-nom">${nom} <span class="q-holat">${HOLAT[v] || v}</span></div>${ich}${korishHavola(d, k)}</div>
     </li>`;
   }).join('');
   ilova.innerHTML = `<main>
@@ -164,6 +175,11 @@ function dars(id) {
     <section><h2>Bosqichlar</h2><ol class="yol">${qadamlar}</ol></section>
     <section><h2>Fidbeklar</h2>${fb.length ? `<ul class="fb-royxat">${fb.map((f) => fbKarta(f, false)).join('')}</ul>` : '<p class="bosh">Bu darsga fidbek yozilmagan.</p>'}</section>
   </main>`;
+  ilova.querySelectorAll('a[data-bot], a[data-tashqi]').forEach((x) => x.onclick = (e) => {
+    if (!tg) return; // brauzerda oddiy havola
+    e.preventDefault();
+    if (x.dataset.bot !== undefined) { tg.openTelegramLink(x.href); tg.close(); } else tg.openLink(x.href);
+  });
   scrollTo(0, 0);
 }
 
