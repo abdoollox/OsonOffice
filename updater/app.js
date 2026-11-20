@@ -34,12 +34,15 @@ const QADAMLAR_HAMMASI = [
   { id: 'elon', ikon: 'paper-plane-right-fill', nom: "E'lon", ich: ['youtube', 'elon-materiallari', 'elon'], izoh: "Uzun video YouTube'ga, promo post kanalga — ruxsat bilan" },
   { id: 'oqitish', ikon: 'graduation-cap-fill', nom: "O'qitish", ich: ['test', 'lms'], izoh: "Uzun video va test Exode'ga — xodimlar o'rganadi" },
 ];
-// faqat ishlayotgan bosqichlarga tegishli qadamlar (uzun video to'xtatilgan bo'lsa — "Uzun video" va "O'qitish" ko'rinmaydi)
+// uzun video to'xtatilgan bo'lsa (bosqichlari ro'yxatda yo'q) — "Uzun video" va "O'qitish" qadamlari joyida qoladi, lekin xira (toxtagan)
 const qadamlar = () => {
   const bor = new Set((S.data?.bosqichlar || []).map((b) => b.id));
   const uzun = bor.has('youtube');
-  return QADAMLAR_HAMMASI.filter((q) => q.ich.some((id) => bor.has(id)))
-    .map((q) => (q.id === 'elon' && !uzun ? { ...q, izoh: "Promo video va post kanalga — ruxsat bilan" } : q));
+  return QADAMLAR_HAMMASI.map((q) => {
+    const ich = q.ich.filter((id) => bor.has(id));
+    if (!ich.length) return { ...q, toxtagan: true };
+    return { ...q, ich, ...(q.id === 'elon' && !uzun ? { izoh: "Promo video va post kanalga — ruxsat bilan" } : {}) };
+  });
 };
 // hozirgi holat → bir jumla; kut: odamdan javob kutilyapti
 function holat(i) {
@@ -69,6 +72,7 @@ function holat(i) {
   }[i.navbatdagi] || { matn: 'Ishlanyapti' };
 }
 const qadamHol = (i, q) => {
+  if (q.toxtagan) return 'o'; // hozircha to'xtatilgan (uzun video)
   if (q.ich.every((id) => i.bosqichlar[id]?.holat === 'otkazildi')) return 'o'; // bu ishga tegishli emas
   if (q.ich.every((id) => ['tayyor', 'otkazildi'].includes(i.bosqichlar[id]?.holat))) return 't';
   return q.ich.includes(i.navbatdagi) ? 'h' : '';
@@ -85,7 +89,7 @@ function qatorHtml(i) {
   return `<button class="qator ${turi(h)}" data-ish="${esc(i.nom)}"><span class="chiziq"></span>
     <div><div class="qator-nom">${esc(nomi(i))} <span class="qator-dastur">· ${mahsulot(i.mahsulot)}</span></div>
       <p class="qator-holat">${esc(h.matn)}</p>
-      <ol class="belgilar" aria-label="Qadamlar">${qadamlar().map((q) => { const hol = qadamHol(i, q); return `<li class="${hol}${hol === 'h' && h.kut ? ' kut' : ''}"><span class="b-ik">${ikf(q.ikon)}${hol === 't' ? `<span class="b-ok">${ikf('check-bold')}</span>` : ''}</span><span class="b-nom">${q.nom}</span><span class="sr">${hol === 't' ? ' — bajarildi' : hol === 'h' ? ' — hozir' : hol === 'o' ? ' — kerak emas' : ''}</span></li>`; }).join('')}</ol></div>${ik('chevron-right')}</button>`;
+      <ol class="belgilar" aria-label="Qadamlar">${qadamlar().map((q) => { const hol = qadamHol(i, q); return `<li class="${hol}${hol === 'h' && h.kut ? ' kut' : ''}"><span class="b-ik">${ikf(q.ikon)}${hol === 't' ? `<span class="b-ok">${ikf('check-bold')}</span>` : ''}</span><span class="b-nom">${q.nom}</span><span class="sr">${hol === 't' ? ' — bajarildi' : hol === 'h' ? ' — hozir' : hol === 'o' ? (q.toxtagan ? " — hozircha to'xtatilgan" : ' — kerak emas') : ''}</span></li>`; }).join('')}</ol></div>${ik('chevron-right')}</button>`;
 }
 function royxatChiz() {
   const ishlar = S.data.ishlar;
@@ -138,7 +142,7 @@ function sahnaHtml(i) {
       <div class="kadr-matn"><b>${esc(x.nom)}</b>${(x.rasm || x.eskiz?.ikonlar?.length) && x.ekran ? `<p class="kadr-ekran">${esc(x.ekran)}</p>` : ''}${x.diktor ? `<p>«${esc(x.diktor)}»</p>` : ''}</div></article>`).join('')}</div>
     <p class="sanoq">${s.length} sahna — chapga suring</p>` : '';
   const toliq = (i.loyiha ? `<details class="ochiq quti" style="padding: var(--s3)"><summary>Promo ssenariysining to'liq matni</summary><div class="matn">${esc(i.loyiha)}</div></details>` : '')
-    + (i.uzunLoyiha && qadamlar().some((q) => q.id === 'uzun') ? `<details class="ochiq quti" style="padding: var(--s3)"><summary>Uzun video ssenariysi</summary><div class="matn">${esc(i.uzunLoyiha)}</div></details>` : '');
+    + (i.uzunLoyiha && qadamlar().some((q) => q.id === 'uzun' && !q.toxtagan) ? `<details class="ochiq quti" style="padding: var(--s3)"><summary>Uzun video ssenariysi</summary><div class="matn">${esc(i.uzunLoyiha)}</div></details>` : '');
   return tasma + toliq;
 }
 const ICHI = { material: materialHtml, savollar: savolHtml, ssenariy: sahnaHtml };
@@ -165,7 +169,7 @@ function ishChiz() {
       return `<li class="yq ${hol}${hol === 'h' && h.kut ? ' kut' : ''}" ${hol === 'h' ? 'aria-current="step"' : ''}>
         <span class="nuqta">${hol === 't' ? ik('check') : hol === 'o' ? '–' : n + 1}</span>
         ${ichi && hol === 't' ? `<button class="yq-bosh" data-q="${q.id}" aria-expanded="${ochiq}">${bosh}${ik('chevron-right')}</button>` : `<div class="yq-bosh">${bosh}</div>`}
-        ${ichi && ochiq ? `<div class="yq-ich">${ichi}</div>` : hol === '' ? `<p class="yq-izoh">${q.izoh}</p>` : hol === 'o' ? '<p class="yq-izoh">Bu update uchun kerak emas</p>' : ''}
+        ${ichi && ochiq ? `<div class="yq-ich">${ichi}</div>` : hol === '' ? `<p class="yq-izoh">${q.izoh}</p>` : hol === 'o' ? `<p class="yq-izoh">${q.toxtagan ? "Hozircha to'xtatilgan" : 'Bu update uchun kerak emas'}</p>` : ''}
       </li>`;
     }).join('')}</ol>
     ${S.data.ega ? `<details class="ichki" id="ichki" ${S.ichkiOchiq ? 'open' : ''}><summary>${ik('list-checks')}Jamoa uchun: ${S.data.bosqichlar.length} ichki bosqich</summary>
