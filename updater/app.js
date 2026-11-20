@@ -2,7 +2,7 @@
 // Dizayn: UI UX Pro Max skill — "Logistics/Delivery": posilka kuzatuvidek. Update sahifasida 5 qadam vertikal yo'l bo'lib turadi,
 // har qadamning materiali o'z ichida (Material — PM fayllari, Savollar — savol va javoblar, Ssenariy — kadrli sahnalar).
 // Ma'lumot A bilan bir xil: updater-api.osonacademy.uz/api/ishlar.
-import { IK, PH } from './ikonlar.js?v=20261119g'; // ?v= — Telegram eski nusxani keshdan bermasin; fayl o'zgarsa raqamni yangilang
+import { IK, PH } from './ikonlar.js?v=20261120r'; // ?v= — Telegram eski nusxani keshdan bermasin; fayl o'zgarsa raqamni yangilang
 
 const API = 'https://updater-api.osonacademy.uz/api';
 const tg = window.Telegram?.WebApp;
@@ -120,41 +120,80 @@ function royxatChiz() {
   bolimUlash();
 }
 
-// ── Relizlar (Abdulloh, 2026-11-20): bir nechta update bitta postda — qaysi update qaysi relizda, qayerda turibdi ──
-const RH = { yigilmoqda: { matn: "Yig'ilmoqda", t: '' }, post: { matn: 'Post tayyor — kanalga forward qiling', t: 'kut' }, elon: { matn: "E'lon qilindi", t: 'tayyor' } };
-const relizHisob = (r) => `Post matni tayyor: ${r.ishlar.filter((y) => y.post).length}/${r.ishlar.length}`;
+// ── Relizlar (Abdulloh, 2026-11-20): bir nechta update — kanalga bitta xabar, tafsiloti blogda. Update'lardagidek qadamlar bilan:
+// Tarkib → Videolar (har promo o'z topigida tasdiqlanadi) → Post (kanal xabari + blog matni) → Blog (post tasdiqlangach saytga) → E'lon (forward)
+const RQ = [
+  { id: 'tarkib', ikon: 'stack-fill', nom: 'Tarkib', izoh: "PM yoki QA relizga qaysi update'lar kirishini aytadi" },
+  { id: 'video', ikon: 'video-camera-fill', nom: 'Videolar', izoh: "Har update'ning promo videosi o'z topigida tasdiqlanadi" },
+  { id: 'post', ikon: 'article-fill', nom: 'Post', izoh: 'Agent kanal xabarini va blog matnini yozadi' },
+  { id: 'blog', ikon: 'globe-hemisphere-west-fill', nom: 'Blog', izoh: 'Post tasdiqlangach blog osonacademy.uz saytiga joylanadi' },
+  { id: 'elon', ikon: 'paper-plane-right-fill', nom: "E'lon", izoh: 'PM yoki QA xabarni kanalga forward qiladi' },
+];
+const videoSoni = (r) => r.ishlar.filter((y) => y.video || y.elon).length;
+const rqTayyor = (r, id) => ({ tarkib: r.ishlar.length > 0, video: r.videolar, post: !!r.postVaqt, blog: !!r.blogVaqt, elon: r.holat === 'elon' }[id]);
+const rqJoriy = (r) => RQ.find((q) => !rqTayyor(r, q.id));
+const rqHol = (r, q) => (rqTayyor(r, q.id) ? 't' : rqJoriy(r) === q ? 'h' : '');
+const rqVaqt = (r, id) => sana({ tarkib: r.yaratildi, video: r.ishlar.map((y) => y.videoVaqt).filter(Boolean).sort().at(-1), post: r.postVaqt, blog: r.blogVaqt, elon: r.elonVaqt }[id]);
+function relizHolat(r) {
+  const q = rqJoriy(r);
+  if (!q) return { matn: "E'lon qilindi", tayyor: true };
+  return {
+    tarkib: { matn: "Relizga update'lar qo'shilmoqda" },
+    video: { matn: `Promo videolar tasdig'i: ${videoSoni(r)}/${r.ishlar.length}`, kut: true, tugma: 'Topikni ochish' },
+    post: { matn: 'Agent kanal xabari va blog matnini yozyapti' },
+    blog: { matn: 'Reliz postini tasdiqlang yoki tuzating', kut: true, tugma: 'Topikni ochish' },
+    elon: { matn: 'Xabarni kanalga forward qiling', kut: true, tugma: 'Topikni ochish' },
+  }[q.id];
+}
+const rqBelgilar = (r, h) => `<ol class="belgilar" aria-label="Qadamlar">${RQ.map((q) => { const hol = rqHol(r, q); return `<li class="${hol}${hol === 'h' && h.kut ? ' kut' : ''}"><span class="b-ik">${ikf(q.ikon)}${hol === 't' ? `<span class="b-ok">${ikf('check-bold')}</span>` : ''}</span><span class="b-nom">${q.nom}</span><span class="sr">${hol === 't' ? ' — bajarildi' : hol === 'h' ? ' — hozir' : ''}</span></li>`; }).join('')}</ol>`;
 function relizRoyxat() {
   ilova.innerHTML = `<main>${bolimlar()}
     <h1 class="sr">Relizlar</h1>
     ${S.data.relizlar?.length ? "" : bosh("rocket", "Hozircha reliz yo'q", "Bir nechta update bitta postda chiqsa, reliz shu yerda ko'rinadi. Relizni PM yoki QA guruhda aytadi.")}
-    ${(S.data.relizlar || []).map((r) => `<button class="qator ${RH[r.holat].t}" data-reliz="${esc(r.id)}"><span class="chiziq"></span>
-      <div><div class="qator-nom">${esc(r.nomi)}${r.sinov ? ' <span class="qator-dastur">· sinov</span>' : ''}</div>
-        <p class="qator-holat">${esc(RH[r.holat].matn)} · ${r.ishlar.length} ta update</p>
-        <p class="reliz-hisob">${r.holat === 'elon' ? esc(sana(r.elonVaqt) || '') : esc(relizHisob(r))}</p></div>${ik('chevron-right')}</button>`).join('')}</main>`;
-  ilova.querySelectorAll('[data-reliz]').forEach((b) => (b.onclick = () => { S.reliz = b.dataset.reliz; S.royxatdan = true; chiz(); scrollTo(0, 0); }));
+    ${(S.data.relizlar || []).map((r) => { const h = relizHolat(r); return `<button class="qator ${turi(h)}" data-reliz="${esc(r.id)}"><span class="chiziq"></span>
+      <div><div class="qator-dastur kassa">Reliz · ${r.ishlar.length} ta update${r.sinov ? ' · sinov' : ''}</div><div class="qator-nom">${esc(r.nomi)}</div>
+        <p class="qator-holat">${esc(h.matn)}</p>${rqBelgilar(r, h)}</div>${ik('chevron-right')}</button>`; }).join('')}</main>`;
+  ilova.querySelectorAll('[data-reliz]').forEach((b) => (b.onclick = () => { S.reliz = b.dataset.reliz; S.royxatdan = true; S.ochiq.clear(); chiz(); scrollTo(0, 0); }));
   bolimUlash();
 }
 function relizChiz() {
   const r = S.data.relizlar?.find((x) => x.id === S.reliz);
   if (!r) { S.reliz = null; return chiz(); }
-  const h = RH[r.holat];
+  const h = relizHolat(r), joriy = rqJoriy(r);
   const orqa = S.royxatdan && !tg?.BackButton ? `<button class="orqa" id="orqa" aria-label="Hamma relizlar">${ik('arrow-left')}</button>` : '';
   const havola = (url, ikon, nom, izoh) => (url ? `<li class="mk"><div class="mk-bosh"><span class="mk-ik">${ik(ikon)}</span>
     <div class="mk-nom"><b>${nom}</b><span>${esc(izoh)}</span></div><a class="mk-tg" href="${esc(url)}" ${url.includes('t.me/') ? 'data-tg' : 'target="_blank" rel="noopener"'}>${ik('send-horizontal')}Ochish</a></div></li>` : '');
-  const ishHol = (y) => (y.elon ? "E'lon qilindi" : y.post ? 'Post matni tayyor' : (S.data.bosqichlar.find((b) => b.id === y.navbatdagi)?.nomi || 'Jarayonda'));
+  const ishHol = (y) => (y.elon ? "E'lon qilindi" : y.video ? 'Promo video tasdiqlandi' : (S.data.bosqichlar.find((b) => b.id === y.navbatdagi)?.nomi || 'Jarayonda'));
+  const ishlarHtml = `<ul class="reliz-ishlar">${r.ishlar.map((y) => `<li><button data-ish="${esc(y.nom)}"><span class="ri-belgi ${y.elon ? 't' : y.video ? 'p' : ''}">${y.elon || y.video ? ik('check') : ''}</span>
+      <span><b>${esc(y.sarlavha)}</b><small>${esc(ishHol(y))}</small></span>${ik('chevron-right')}</button></li>`).join('')}</ul>`;
+  const postHtml = r.postMatn ? `<p class="yq-izoh">Kanalga bitta xabar chiqadi — u blogga olib boradi (Telegram'da «Instant View» bilan ochiladi).</p><div class="quti"><div class="matn">${esc(r.postMatn).replace(/\*\*([^*\n]+)\*\*/g, '<b>$1</b>')}</div></div>` : '';
+  const ICH = {
+    tarkib: ishlarHtml, video: ishlarHtml, post: postHtml,
+    // blog qadami hozir bo'lsa — tasdiqlanadigan post matni; joylangach — blog havolasi
+    blog: r.blog ? `<ul class="materiallar">${havola(r.blog, 'globe', 'Blog sahifasi', 'osonacademy.uz/blog')}</ul>` : postHtml,
+    elon: r.kanal || r.mavzu ? `<ul class="materiallar">${havola(r.kanal, 'megaphone', 'Kanaldagi post', sana(r.elonVaqt) || 'Telegram')}${havola(r.mavzu, 'message-circle', 'Reliz topigi', 'Telegram guruhda')}</ul>` : '',
+  };
+  const yorliq = h.kut ? 'Sizni kutyapti' : h.tayyor ? 'Tayyor' : 'Jarayonda';
   ilova.innerHTML = `<main>
-    <div class="tepa">${orqa}<div><span class="chip">${ikf('rocket-launch-fill')}Reliz</span><h1>${esc(r.nomi)}</h1></div></div>
-    <section class="hero ${h.t}"><div class="hero-yorliq">${ik(r.holat === 'elon' ? 'circle-check' : r.holat === 'post' ? 'clock' : 'loader-circle')}${esc(h.matn)}</div>
-      <p class="hero-matn">${r.holat === 'elon' ? "Hamma update'lar kanalga chiqdi" : esc(relizHisob(r))}</p>
-      <p class="hero-qadam">Reliz hamma update'ning posti tayyor bo'lgach bitta albom bo'lib chiqadi</p></section>
-    <h2 class="kichik-sarlavha">Update'lar · ${r.ishlar.length}</h2>
-    <ul class="reliz-ishlar">${r.ishlar.map((y) => `<li><button data-ish="${esc(y.nom)}"><span class="ri-belgi ${y.elon ? 't' : y.post ? 'p' : ''}">${y.elon || y.post ? ik('check') : ''}</span>
-      <span><b>${esc(y.sarlavha)}</b><small>${esc(ishHol(y))}</small></span>${ik('chevron-right')}</button></li>`).join('')}</ul>
-    ${r.mavzu || r.kanal || r.blog ? `<h2 class="kichik-sarlavha">Havolalar</h2><ul class="materiallar">
-      ${havola(r.mavzu, 'message-circle', 'Reliz topigi', 'Telegram guruhda')}${havola(r.kanal, 'megaphone', 'Kanaldagi post', sana(r.elonVaqt) || 'Telegram')}${havola(r.blog, 'globe', 'Blog sahifasi', 'osonacademy.uz/blog')}</ul>` : ''}
+    <div class="tepa">${orqa}<div><span class="chip">${ikf('rocket-launch-fill')}Reliz · ${r.ishlar.length} ta update</span><h1>${esc(r.nomi)}</h1></div></div>
+    <section class="hero ${turi(h)}" aria-live="polite"><div class="hero-yorliq">${ik(h.kut ? 'clock' : h.tayyor ? 'circle-check' : 'loader-circle')}${yorliq}</div>
+      <p class="hero-matn">${esc(h.matn)}</p>
+      ${joriy ? `<p class="hero-qadam">${RQ.indexOf(joriy) + 1}-qadam / ${RQ.length} · ${joriy.nom}</p>` : ''}
+      ${h.kut && r.mavzu ? `<a class="tugma" href="${esc(r.mavzu)}" data-tg>${ik('message-circle')}${esc(h.tugma)}</a>` : ''}</section>
+    <ol class="yol" aria-label="Qadamlar">${RQ.map((q, n) => {
+      const hol = rqHol(r, q), ichi = ICH[q.id] || '';
+      const ochiq = hol === 'h' || S.ochiq.has('r-' + q.id);
+      const bosh = `<span class="yq-nom">${q.nom}</span><span class="yq-vaqt">${hol === 't' ? esc(rqVaqt(r, q.id)) : hol === 'h' ? 'hozir' : ''}</span>`;
+      return `<li class="yq ${hol}${hol === 'h' && h.kut ? ' kut' : ''}" ${hol === 'h' ? 'aria-current="step"' : ''}>
+        <span class="nuqta">${hol === 't' ? ik('check') : n + 1}</span>
+        ${ichi && hol === 't' ? `<button class="yq-bosh" data-q="r-${q.id}" aria-expanded="${ochiq}">${bosh}${ik('chevron-right')}</button>` : `<div class="yq-bosh">${bosh}</div>`}
+        ${ichi && ochiq ? `<div class="yq-ich">${ichi}</div>` : hol === '' || (hol === 'h' && !ichi) ? `<p class="yq-izoh">${q.izoh}</p>` : ''}
+      </li>`;
+    }).join('')}</ol>
   </main>`;
   document.getElementById('orqa')?.addEventListener('click', royxatga);
   ilova.querySelectorAll('[data-ish]').forEach((b) => (b.onclick = () => { S.reliz = null; och(b.dataset.ish); }));
+  ilova.querySelectorAll('[data-q]').forEach((b) => (b.onclick = () => { S.ochiq.has(b.dataset.q) ? S.ochiq.delete(b.dataset.q) : S.ochiq.add(b.dataset.q); chiz(); }));
   ilova.querySelectorAll('a[data-tg]').forEach((a) => a.addEventListener('click', (e) => { if (tg?.openTelegramLink) { e.preventDefault(); tg.openTelegramLink(a.href); } }));
 }
 
