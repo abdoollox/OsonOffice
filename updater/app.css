@@ -264,3 +264,4 @@ a.mat .ik:last-child { color: var(--c-faint); width: 16px; height: 16px; }
 .qator-dastur.kassa::before, .qator-dastur.price::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--c-primary); }
 .qator-dastur.price::before { background: var(--c-done); }
 .reliz-ishlar a { text-decoration: none; color: inherit; }
+.muqova-rasm { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: var(--r); border: 1px solid var(--c-border); }

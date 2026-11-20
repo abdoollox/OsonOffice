@@ -2,7 +2,7 @@
 // Dizayn: UI UX Pro Max skill — "Logistics/Delivery": posilka kuzatuvidek. Update sahifasida 5 qadam vertikal yo'l bo'lib turadi,
 // har qadamning materiali o'z ichida (Material — PM fayllari, Savollar — savol va javoblar, Ssenariy — kadrli sahnalar).
 // Ma'lumot A bilan bir xil: updater-api.osonacademy.uz/api/ishlar.
-import { IK, PH } from './ikonlar.js?v=20261120s'; // ?v= — Telegram eski nusxani keshdan bermasin; fayl o'zgarsa raqamni yangilang
+import { IK, PH } from './ikonlar.js?v=20261120t'; // ?v= — Telegram eski nusxani keshdan bermasin; fayl o'zgarsa raqamni yangilang
 
 const API = 'https://updater-api.osonacademy.uz/api';
 const tg = window.Telegram?.WebApp;
@@ -121,27 +121,31 @@ function royxatChiz() {
 }
 
 // ── Relizlar (Abdulloh, 2026-11-20): bir nechta update — kanalga bitta xabar, tafsiloti blogda. Update'lardagidek qadamlar bilan:
-// Tarkib → Videolar (har promo o'z topigida tasdiqlanadi) → Post (kanal xabari + blog matni) → Blog (post tasdiqlangach saytga) → E'lon (forward)
+// Tarkib → Videolar (har promo o'z topigida tasdiqlanadi) → Muqova (16:9, Gemini) → Blog (joylanadi, PM/QA Instant View'da o'qib tasdiqlaydi)
+// → Post (blogga olib boradigan bitta xabar, tasdiqlanadi) → E'lon (forward). Abdulloh, 2026-11-20: avval blog, keyin post
 const RQ = [
   { id: 'tarkib', ikon: 'stack-fill', nom: 'Tarkib', izoh: "PM yoki QA relizga qaysi update'lar kirishini aytadi" },
   { id: 'video', ikon: 'video-camera-fill', nom: 'Videolar', izoh: "Har update'ning promo videosi o'z topigida tasdiqlanadi" },
-  { id: 'post', ikon: 'article-fill', nom: 'Post', izoh: 'Agent kanal xabarini va blog matnini yozadi' },
-  { id: 'blog', ikon: 'globe-hemisphere-west-fill', nom: 'Blog', izoh: 'Post tasdiqlangach blog osonacademy.uz saytiga joylanadi' },
+  { id: 'muqova', ikon: 'image-fill', nom: 'Muqova', izoh: "Agent relizga mos 16:9 rasm tayyorlaydi — blog tepasida va post ostida turadi" },
+  { id: 'blog', ikon: 'globe-hemisphere-west-fill', nom: 'Blog', izoh: "Agent blog yozib saytga qo'yadi, PM yoki QA uni o'qib tasdiqlaydi" },
+  { id: 'post', ikon: 'article-fill', nom: 'Post', izoh: 'Agent blogga olib boradigan kanal xabarini yozadi — tasdiqlanadi' },
   { id: 'elon', ikon: 'paper-plane-right-fill', nom: "E'lon", izoh: 'PM yoki QA xabarni kanalga forward qiladi' },
 ];
 const videoSoni = (r) => r.ishlar.filter((y) => y.video || y.elon).length;
-const rqTayyor = (r, id) => ({ tarkib: r.ishlar.length > 0, video: r.videolar, post: !!r.postVaqt, blog: !!r.blogVaqt, elon: r.holat === 'elon' }[id]);
+const rqTayyor = (r, id) => ({ tarkib: r.ishlar.length > 0, video: r.videolar, muqova: !!r.muqovaVaqt, blog: !!r.blogTasdiq, post: !!r.postTasdiq, elon: r.holat === 'elon' }[id]);
 const rqJoriy = (r) => RQ.find((q) => !rqTayyor(r, q.id));
 const rqHol = (r, q) => (rqTayyor(r, q.id) ? 't' : rqJoriy(r) === q ? 'h' : '');
-const rqVaqt = (r, id) => sana({ tarkib: r.yaratildi, video: r.ishlar.map((y) => y.videoVaqt).filter(Boolean).sort().at(-1), post: r.postVaqt, blog: r.blogVaqt, elon: r.elonVaqt }[id]);
+const rqVaqt = (r, id) => sana({ tarkib: r.yaratildi, video: r.ishlar.map((y) => y.videoVaqt).filter(Boolean).sort().at(-1), muqova: r.muqovaVaqt,
+  blog: r.blogTasdiq?.vaqt, post: r.postTasdiq?.vaqt, elon: r.elonVaqt }[id]);
 function relizHolat(r) {
   const q = rqJoriy(r);
   if (!q) return { matn: "E'lon qilindi", tayyor: true };
   return {
     tarkib: { matn: "Relizga update'lar qo'shilmoqda" },
     video: { matn: `Promo videolar tasdig'i: ${videoSoni(r)}/${r.ishlar.length}`, kut: true, tugma: 'Topikni ochish' },
-    post: { matn: 'Agent kanal xabari va blog matnini yozyapti' },
-    blog: { matn: 'Reliz postini tasdiqlang yoki tuzating', kut: true, tugma: 'Topikni ochish' },
+    muqova: { matn: 'Agent reliz muqovasini tayyorlayapti' },
+    blog: r.blogVaqt ? { matn: "Blogni o'qib tasdiqlang yoki tuzating", kut: true, tugma: 'Topikni ochish' } : { matn: 'Agent blog yozyapti' },
+    post: r.postVaqt ? { matn: 'Kanal xabarini tasdiqlang yoki tuzating', kut: true, tugma: 'Topikni ochish' } : { matn: 'Agent kanal xabarini yozyapti' },
     elon: { matn: 'Xabarni kanalga forward qiling', kut: true, tugma: 'Topikni ochish' },
   }[q.id];
 }
@@ -169,9 +173,12 @@ function relizChiz() {
       <span><b>${esc(y.sarlavha)}</b><small>${esc(video && y.videoHavola ? (y.video ? 'Tasdiqlangan videoni ochish' : 'Videoni ochish') : ishHol(y))}</small></span>${ik(video && y.videoHavola ? 'send-horizontal' : 'chevron-right')}${video && y.videoHavola ? '</a>' : '</button>'}</li>`).join('')}</ul>`;
   const postHtml = r.postMatn ? `<p class="yq-izoh">Kanalga bitta xabar chiqadi — u blogga olib boradi (Telegram'da «Instant View» bilan ochiladi).</p><div class="quti"><div class="matn">${esc(r.postMatn).replace(/\*\*([^*\n]+)\*\*/g, '<b>$1</b>')}</div></div>` : '';
   const ICH = {
-    tarkib: ishlarHtml(false), video: ishlarHtml(true), post: postHtml,
-    // blog qadami hozir bo'lsa — tasdiqlanadigan post matni; joylangach — blog havolasi
-    blog: r.blog ? `<ul class="materiallar">${havola(r.blog, 'globe', 'Blog sahifasi', 'osonacademy.uz/blog')}</ul>` : postHtml,
+    tarkib: ishlarHtml(false), video: ishlarHtml(true),
+    // muqova rasmi saytdan (blog joylangach) — undan oldin faqat izoh
+    muqova: r.muqovaRasm ? `<img class="muqova-rasm" src="${esc(r.muqovaRasm)}" alt="Reliz muqovasi" loading="lazy">` : '',
+    blog: r.blog ? `<ul class="materiallar">${havola(r.blog, 'globe', 'Blog sahifasi', 'osonacademy.uz/blog')}</ul>` : '',
+    // post — blog tasdiqlangach yoziladi
+    post: r.blogTasdiq ? postHtml : '',
     elon: r.kanal || r.mavzu ? `<ul class="materiallar">${havola(r.kanal, 'megaphone', 'Kanaldagi post', sana(r.elonVaqt) || 'Telegram')}${havola(r.mavzu, 'message-circle', 'Reliz topigi', 'Telegram guruhda')}</ul>` : '',
   };
   const yorliq = h.kut ? 'Sizni kutyapti' : h.tayyor ? 'Tayyor' : 'Jarayonda';
