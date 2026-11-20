@@ -147,7 +147,20 @@ function sahnaHtml(i) {
 }
 // E'lon: kanal uchun tayyor post matni (Telegram'dagi ko'rinishiga yaqin: qalin — **…**)
 const elonHtml = (i) => (i.post ? `<p class="yq-izoh">Kanal uchun tayyor post. Videosi bilan birga update topigida — o'shani kanalga forward qiling.</p><div class="quti"><div class="matn">${esc(i.post).replace(/\*\*([^*\n]+)\*\*/g, '<b>$1</b>')}</div></div>` : '');
-const ICHI = { material: materialHtml, savollar: savolHtml, ssenariy: sahnaHtml, elon: elonHtml };
+// Promo: bot topikka yuborgan videolar — bosilsa Telegram'dagi o'sha xabar ochiladi (VPS'ga video yuklanmaydi)
+function videoHtml(i) {
+  const v = i.videolar || {};
+  const qator = (x, nom, izoh) => (x ? `<li class="mk"><div class="mk-bosh"><span class="mk-ik">${ik('video')}</span>
+    <div class="mk-nom"><b>${nom}</b><span>${esc(izoh)} · ${esc(sana(x.vaqt))}</span></div>
+    <a class="mk-tg" href="${esc(x.havola)}" data-tg aria-label="${nom} — Telegram guruhda ochish">${ik('send-horizontal')}Ochish</a></div></li>` : '');
+  const q = qator(v['1x1'], 'Promo video', '1:1, post uchun') + qator(v['9x16'], 'Promo video', '9:16, story uchun');
+  if (q) return `<ul class="materiallar">${q}</ul>`;
+  if (i.mavzu) return `<ul class="materiallar"><li class="mk"><div class="mk-bosh"><span class="mk-ik">${ik('video')}</span>
+    <div class="mk-nom"><b>Promo video</b><span>Update topigida</span></div>
+    <a class="mk-tg" href="${esc(i.mavzu)}" data-tg aria-label="Update topigini ochish">${ik('send-horizontal')}Ochish</a></div></li></ul>`;
+  return '';
+}
+const ICHI = { material: materialHtml, savollar: savolHtml, ssenariy: sahnaHtml, video: videoHtml, elon: elonHtml };
 
 function ishChiz() {
   const i = S.data.ishlar.find((x) => x.nom === S.ish);
