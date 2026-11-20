@@ -214,3 +214,24 @@ a.mat .ik:last-child { color: var(--c-faint); width: 16px; height: 16px; }
 .skelet { height: 88px; border-radius: var(--r); background: var(--c-card); margin-bottom: var(--s2); animation: yon 1.2s ease-in-out infinite alternate; }
 @keyframes yon { to { opacity: .5; } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+
+/* Relizlar (2026-11-20) */
+.bolimlar { display: flex; gap: var(--s1); padding: 4px; margin-bottom: var(--s4); border-radius: 12px; background: var(--c-card); border: 1px solid var(--c-border); }
+.bolimlar button { flex: 1; min-height: 38px; border: 0; border-radius: 9px; background: transparent; color: var(--c-muted); font: 600 15px var(--f-head); cursor: pointer; }
+.bolimlar button[aria-selected="true"] { background: var(--c-fg); color: var(--c-bg); }
+.bolimlar b { font-variant-numeric: tabular-nums; opacity: .7; }
+.reliz-chip { margin-top: var(--s2); color: var(--c-primary); border: 0; cursor: pointer; }
+.reliz-chip .ik { width: 14px; height: 14px; }
+.chip .ik { width: 14px; height: 14px; }
+.reliz-hisob { margin-top: 2px; font-size: 14px; color: var(--c-faint); }
+.kichik-sarlavha { font: 600 15px var(--f-head); color: var(--c-muted); margin: var(--s5) 0 var(--s2); }
+.reliz-ishlar { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s2); }
+.reliz-ishlar button { width: 100%; display: grid; grid-template-columns: 26px 1fr auto; gap: var(--s3); align-items: center; text-align: left;
+  padding: var(--s3); border-radius: var(--r); border: 1px solid var(--c-border); background: var(--c-card); color: var(--c-fg); cursor: pointer; }
+.reliz-ishlar b { display: block; font: 600 15px/1.3 var(--f-head); }
+.reliz-ishlar small { color: var(--c-muted); font-size: 14px; }
+.reliz-ishlar .ik { color: var(--c-faint); }
+.ri-belgi { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; border: 2px dashed var(--c-faint); }
+.ri-belgi.p { border: 0; background: var(--c-wait-strong); }
+.ri-belgi.t { border: 0; background: var(--c-done); }
+.ri-belgi .ik { width: 15px; height: 15px; color: #fff; }
