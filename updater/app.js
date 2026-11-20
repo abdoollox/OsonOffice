@@ -65,10 +65,10 @@ function holat(i) {
     'uzun-tekshiruv': { matn: "Uzun videoni ko'rib, fikr bildiring", kut: true, tugma: 'Chatda fikr bildirish' },
     'uzun-tuzatish': { matn: "Agent izohlar bo'yicha tuzatyapti" },
     youtube: { matn: "Agent uzun videoni YouTube'ga joylayapti" },
-    'elon-materiallari': { matn: 'Agent post va blog tayyorlayapti' },
+    'elon-materiallari': { matn: 'Agent post matnini tayyorlayapti' },
     test: { matn: 'Test savollarini tekshirish kerak', kut: true, tugma: 'Chatda tasdiqlash' },
     lms: { matn: "Agent video va testni Exode'ga joylayapti" },
-    elon: { matn: "E'longa ruxsat bering", kut: true, tugma: 'Chatda ruxsat berish' },
+    elon: { matn: "Tayyor postni kanalga forward qiling", kut: true, tugma: 'Topikni ochish' },
   }[i.navbatdagi] || { matn: 'Ishlanyapti' };
 }
 const qadamHol = (i, q) => {
@@ -145,7 +145,9 @@ function sahnaHtml(i) {
     + (i.uzunLoyiha && qadamlar().some((q) => q.id === 'uzun' && !q.toxtagan) ? `<details class="ochiq quti" style="padding: var(--s3)"><summary>Uzun video ssenariysi</summary><div class="matn">${esc(i.uzunLoyiha)}</div></details>` : '');
   return tasma + toliq;
 }
-const ICHI = { material: materialHtml, savollar: savolHtml, ssenariy: sahnaHtml };
+// E'lon: kanal uchun tayyor post matni (Telegram'dagi ko'rinishiga yaqin: qalin — **…**)
+const elonHtml = (i) => (i.post ? `<p class="yq-izoh">Kanal uchun tayyor post. Videosi bilan birga update topigida — o'shani kanalga forward qiling.</p><div class="quti"><div class="matn">${esc(i.post).replace(/\*\*([^*\n]+)\*\*/g, '<b>$1</b>')}</div></div>` : '');
+const ICHI = { material: materialHtml, savollar: savolHtml, ssenariy: sahnaHtml, elon: elonHtml };
 
 function ishChiz() {
   const i = S.data.ishlar.find((x) => x.nom === S.ish);
