@@ -2,7 +2,7 @@
 // Dizayn: UI UX Pro Max skill — "Logistics/Delivery": posilka kuzatuvidek. Update sahifasida 5 qadam vertikal yo'l bo'lib turadi,
 // har qadamning materiali o'z ichida (Material — PM fayllari, Savollar — savol va javoblar, Ssenariy — kadrli sahnalar).
 // Ma'lumot A bilan bir xil: updater-api.osonacademy.uz/api/ishlar.
-import { IK, PH } from './ikonlar.js?v=20261120r'; // ?v= — Telegram eski nusxani keshdan bermasin; fayl o'zgarsa raqamni yangilang
+import { IK, PH } from './ikonlar.js?v=20261120s'; // ?v= — Telegram eski nusxani keshdan bermasin; fayl o'zgarsa raqamni yangilang
 
 const API = 'https://updater-api.osonacademy.uz/api';
 const tg = window.Telegram?.WebApp;
@@ -164,11 +164,12 @@ function relizChiz() {
   const havola = (url, ikon, nom, izoh) => (url ? `<li class="mk"><div class="mk-bosh"><span class="mk-ik">${ik(ikon)}</span>
     <div class="mk-nom"><b>${nom}</b><span>${esc(izoh)}</span></div><a class="mk-tg" href="${esc(url)}" ${url.includes('t.me/') ? 'data-tg' : 'target="_blank" rel="noopener"'}>${ik('send-horizontal')}Ochish</a></div></li>` : '');
   const ishHol = (y) => (y.elon ? "E'lon qilindi" : y.video ? 'Promo video tasdiqlandi' : (S.data.bosqichlar.find((b) => b.id === y.navbatdagi)?.nomi || 'Jarayonda'));
-  const ishlarHtml = `<ul class="reliz-ishlar">${r.ishlar.map((y) => `<li><button data-ish="${esc(y.nom)}"><span class="ri-belgi ${y.elon ? 't' : y.video ? 'p' : ''}">${y.elon || y.video ? ik('check') : ''}</span>
-      <span><b>${esc(y.sarlavha)}</b><small>${esc(ishHol(y))}</small></span>${ik('chevron-right')}</button></li>`).join('')}</ul>`;
+  // Tarkib — update sahifasiga (web-ilova); Videolar — guruhdagi tasdiqlangan promo videoga (Abdulloh, 2026-11-20)
+  const ishlarHtml = (video) => `<ul class="reliz-ishlar">${r.ishlar.map((y) => `<li>${video && y.videoHavola ? `<a href="${esc(y.videoHavola)}" data-tg>` : `<button data-ish="${esc(y.nom)}">`}<span class="ri-belgi ${y.elon ? 't' : y.video ? 'p' : ''}">${y.elon || y.video ? ik('check') : ''}</span>
+      <span><b>${esc(y.sarlavha)}</b><small>${esc(video && y.videoHavola ? (y.video ? 'Tasdiqlangan videoni ochish' : 'Videoni ochish') : ishHol(y))}</small></span>${ik(video && y.videoHavola ? 'send-horizontal' : 'chevron-right')}${video && y.videoHavola ? '</a>' : '</button>'}</li>`).join('')}</ul>`;
   const postHtml = r.postMatn ? `<p class="yq-izoh">Kanalga bitta xabar chiqadi — u blogga olib boradi (Telegram'da «Instant View» bilan ochiladi).</p><div class="quti"><div class="matn">${esc(r.postMatn).replace(/\*\*([^*\n]+)\*\*/g, '<b>$1</b>')}</div></div>` : '';
   const ICH = {
-    tarkib: ishlarHtml, video: ishlarHtml, post: postHtml,
+    tarkib: ishlarHtml(false), video: ishlarHtml(true), post: postHtml,
     // blog qadami hozir bo'lsa — tasdiqlanadigan post matni; joylangach — blog havolasi
     blog: r.blog ? `<ul class="materiallar">${havola(r.blog, 'globe', 'Blog sahifasi', 'osonacademy.uz/blog')}</ul>` : postHtml,
     elon: r.kanal || r.mavzu ? `<ul class="materiallar">${havola(r.kanal, 'megaphone', 'Kanaldagi post', sana(r.elonVaqt) || 'Telegram')}${havola(r.mavzu, 'message-circle', 'Reliz topigi', 'Telegram guruhda')}</ul>` : '',
