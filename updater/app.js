@@ -93,19 +93,19 @@ function qatorHtml(i) {
       <ol class="belgilar" aria-label="Qadamlar">${qadamlar().map((q) => { const hol = qadamHol(i, q); return `<li class="${hol}${hol === 'h' && h.kut ? ' kut' : ''}"><span class="b-ik">${ikf(q.ikon)}${hol === 't' ? `<span class="b-ok">${ikf('check-bold')}</span>` : ''}</span><span class="b-nom">${q.nom}</span><span class="sr">${hol === 't' ? ' — bajarildi' : hol === 'h' ? ' — hozir' : hol === 'o' ? (q.toxtagan ? " — hozircha to'xtatilgan" : ' — kerak emas') : ''}</span></li>`; }).join('')}</ol></div>${ik('chevron-right')}</button>`;
 }
 // bo'limlar: Update'lar | Relizlar (relizlar bo'lsa)
-const bolimlar = () => (S.data.relizlar?.length ? `<div class="bolimlar" role="tablist">
+const bolimlar = () => (S.data ? `<div class="bolimlar" role="tablist">
   <button role="tab" data-b="update" aria-selected="${S.bolim === 'update'}">Update'lar</button>
-  <button role="tab" data-b="reliz" aria-selected="${S.bolim === 'reliz'}">Relizlar <b>${S.data.relizlar.length}</b></button></div>` : '');
+  <button role="tab" data-b="reliz" aria-selected="${S.bolim === 'reliz'}">Relizlar${S.data.relizlar?.length ? ` <b>${S.data.relizlar.length}</b>` : ""}</button></div>` : '');
 const bolimUlash = () => ilova.querySelectorAll('[data-b]').forEach((b) => (b.onclick = () => { S.bolim = b.dataset.b; chiz(); scrollTo(0, 0); }));
 function royxatChiz() {
-  if (S.bolim === 'reliz' && S.data.relizlar?.length) return relizRoyxat();
+  if (S.bolim === 'reliz') return relizRoyxat();
   const ishlar = S.data.ishlar;
   if (!ishlar.length) return (ilova.innerHTML = `<main>${bosh('inbox', "Hali update yo'q", "PM chatda yangi funksiya haqida yozsa, u shu yerda chiqadi.")}</main>`);
   const kut = ishlar.filter((i) => holat(i).kut);
   if (!kut.length) S.filtr = 'hammasi';
   const korin = S.filtr === 'kut' ? kut : ishlar;
   ilova.innerHTML = `<main>${bolimlar()}
-    <div class="tepa-qator${S.data.relizlar?.length ? ' ixcham' : ''}">${S.data.relizlar?.length ? `<h1 class="sr">Update'lar</h1>` : `<h1 class="sarlavha">Update'lar</h1>`}
+    <div class="tepa-qator ixcham"><h1 class="sr">Update'lar</h1>
     <div class="filtr" role="group" aria-label="Saralash">
       <button data-f="kut" aria-pressed="${S.filtr === 'kut'}" ${kut.length ? '' : 'disabled'}>Sizni kutyapti <b>${kut.length}</b></button>
       <button data-f="hammasi" aria-pressed="${S.filtr === 'hammasi'}">Hammasi <b>${ishlar.length}</b></button>
@@ -122,7 +122,8 @@ const relizHisob = (r) => `Post matni tayyor: ${r.ishlar.filter((y) => y.post).l
 function relizRoyxat() {
   ilova.innerHTML = `<main>${bolimlar()}
     <h1 class="sr">Relizlar</h1>
-    ${S.data.relizlar.map((r) => `<button class="qator ${RH[r.holat].t}" data-reliz="${esc(r.id)}"><span class="chiziq"></span>
+    ${S.data.relizlar?.length ? "" : bosh("rocket", "Hozircha reliz yo'q", "Bir nechta update bitta postda chiqsa, reliz shu yerda ko'rinadi. Relizni PM yoki QA guruhda aytadi.")}
+    ${(S.data.relizlar || []).map((r) => `<button class="qator ${RH[r.holat].t}" data-reliz="${esc(r.id)}"><span class="chiziq"></span>
       <div><div class="qator-nom">${esc(r.nomi)}${r.sinov ? ' <span class="qator-dastur">· sinov</span>' : ''}</div>
         <p class="qator-holat">${esc(RH[r.holat].matn)} · ${r.ishlar.length} ta update</p>
         <p class="reliz-hisob">${r.holat === 'elon' ? esc(sana(r.elonVaqt) || '') : esc(relizHisob(r))}</p></div>${ik('chevron-right')}</button>`).join('')}</main>`;
