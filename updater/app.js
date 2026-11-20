@@ -105,7 +105,7 @@ function royxatChiz() {
   if (!kut.length) S.filtr = 'hammasi';
   const korin = S.filtr === 'kut' ? kut : ishlar;
   ilova.innerHTML = `<main>${bolimlar()}
-    <div class="tepa-qator"><h1 class="sarlavha">Update'lar</h1>
+    <div class="tepa-qator${S.data.relizlar?.length ? ' ixcham' : ''}">${S.data.relizlar?.length ? `<h1 class="sr">Update'lar</h1>` : `<h1 class="sarlavha">Update'lar</h1>`}
     <div class="filtr" role="group" aria-label="Saralash">
       <button data-f="kut" aria-pressed="${S.filtr === 'kut'}" ${kut.length ? '' : 'disabled'}>Sizni kutyapti <b>${kut.length}</b></button>
       <button data-f="hammasi" aria-pressed="${S.filtr === 'hammasi'}">Hammasi <b>${ishlar.length}</b></button>
@@ -121,7 +121,7 @@ const RH = { yigilmoqda: { matn: "Yig'ilmoqda", t: '' }, post: { matn: 'Post tay
 const relizHisob = (r) => `Post matni tayyor: ${r.ishlar.filter((y) => y.post).length}/${r.ishlar.length}`;
 function relizRoyxat() {
   ilova.innerHTML = `<main>${bolimlar()}
-    <div class="tepa-qator"><h1 class="sarlavha">Relizlar</h1></div>
+    <h1 class="sr">Relizlar</h1>
     ${S.data.relizlar.map((r) => `<button class="qator ${RH[r.holat].t}" data-reliz="${esc(r.id)}"><span class="chiziq"></span>
       <div><div class="qator-nom">${esc(r.nomi)}${r.sinov ? ' <span class="qator-dastur">· sinov</span>' : ''}</div>
         <p class="qator-holat">${esc(RH[r.holat].matn)} · ${r.ishlar.length} ta update</p>

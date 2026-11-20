@@ -235,3 +235,6 @@ a.mat .ik:last-child { color: var(--c-faint); width: 16px; height: 16px; }
 .ri-belgi.p { border: 0; background: var(--c-wait-strong); }
 .ri-belgi.t { border: 0; background: var(--c-done); }
 .ri-belgi .ik { width: 15px; height: 15px; color: #fff; }
+/* tablar bo'lsa — sarlavha takrorlanmaydi, filtr tablarning ostida ixcham qator */
+.bolimlar { margin-bottom: var(--s3); }
+.tepa-qator.ixcham { margin-bottom: var(--s3); }
