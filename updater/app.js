@@ -87,7 +87,7 @@ const bosh = (ikon, b, p) => `<div class="bosh-ekran">${ik(ikon)}<b>${esc(b)}</b
 function qatorHtml(i) {
   const h = holat(i);
   return `<button class="qator ${turi(h)}" data-ish="${esc(i.nom)}"><span class="chiziq"></span>
-    <div><div class="qator-nom">${esc(nomi(i))} <span class="qator-dastur">· ${mahsulot(i.mahsulot)}</span></div>
+    <div><div class="qator-dastur ${i.mahsulot === 'price' ? 'price' : 'kassa'}">${mahsulot(i.mahsulot)}</div><div class="qator-nom">${esc(nomi(i))}</div>
       <p class="qator-holat">${esc(h.matn)}</p>
       ${i.reliz ? `<span class="chip reliz-chip">${ikf('rocket-launch-fill')}${esc(i.reliz.nomi)}</span>` : ''}
       <ol class="belgilar" aria-label="Qadamlar">${qadamlar().map((q) => { const hol = qadamHol(i, q); return `<li class="${hol}${hol === 'h' && h.kut ? ' kut' : ''}"><span class="b-ik">${ikf(q.ikon)}${hol === 't' ? `<span class="b-ok">${ikf('check-bold')}</span>` : ''}</span><span class="b-nom">${q.nom}</span><span class="sr">${hol === 't' ? ' — bajarildi' : hol === 'h' ? ' — hozir' : hol === 'o' ? (q.toxtagan ? " — hozircha to'xtatilgan" : ' — kerak emas') : ''}</span></li>`; }).join('')}</ol></div>${ik('chevron-right')}</button>`;
