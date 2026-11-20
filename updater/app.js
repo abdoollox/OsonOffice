@@ -93,9 +93,10 @@ function qatorHtml(i) {
       <ol class="belgilar" aria-label="Qadamlar">${qadamlar().map((q) => { const hol = qadamHol(i, q); return `<li class="${hol}${hol === 'h' && h.kut ? ' kut' : ''}"><span class="b-ik">${ikf(q.ikon)}${hol === 't' ? `<span class="b-ok">${ikf('check-bold')}</span>` : ''}</span><span class="b-nom">${q.nom}</span><span class="sr">${hol === 't' ? ' — bajarildi' : hol === 'h' ? ' — hozir' : hol === 'o' ? (q.toxtagan ? " — hozircha to'xtatilgan" : ' — kerak emas') : ''}</span></li>`; }).join('')}</ol></div>${ik('chevron-right')}</button>`;
 }
 // bo'limlar: Update'lar | Relizlar (relizlar bo'lsa)
-const bolimlar = () => (S.data ? `<div class="bolimlar" role="tablist">
+// tablar qatori; o'ngda — filtr tugmasi (faqat Update'lar tabida): bosilsa menyu "Sizni kutyapti / Hammasi" (Abdulloh, 2026-11-20)
+const bolimlar = (filtr = '') => (S.data ? `<div class="bolimlar-qator"><div class="bolimlar" role="tablist">
   <button role="tab" data-b="update" aria-selected="${S.bolim === 'update'}">Update'lar</button>
-  <button role="tab" data-b="reliz" aria-selected="${S.bolim === 'reliz'}">Relizlar${S.data.relizlar?.length ? ` <b>${S.data.relizlar.length}</b>` : ""}</button></div>` : '');
+  <button role="tab" data-b="reliz" aria-selected="${S.bolim === 'reliz'}">Relizlar${S.data.relizlar?.length ? ` <b>${S.data.relizlar.length}</b>` : ""}</button></div>${filtr}</div>` : '');
 const bolimUlash = () => ilova.querySelectorAll('[data-b]').forEach((b) => (b.onclick = () => { S.bolim = b.dataset.b; chiz(); scrollTo(0, 0); }));
 function royxatChiz() {
   if (S.bolim === 'reliz') return relizRoyxat();
@@ -104,14 +105,16 @@ function royxatChiz() {
   const kut = ishlar.filter((i) => holat(i).kut);
   if (!kut.length) S.filtr = 'hammasi';
   const korin = S.filtr === 'kut' ? kut : ishlar;
-  ilova.innerHTML = `<main>${bolimlar()}
-    <div class="tepa-qator ixcham"><h1 class="sr">Update'lar</h1>
-    <div class="filtr" role="group" aria-label="Saralash">
-      <button data-f="kut" aria-pressed="${S.filtr === 'kut'}" ${kut.length ? '' : 'disabled'}>Sizni kutyapti <b>${kut.length}</b></button>
-      <button data-f="hammasi" aria-pressed="${S.filtr === 'hammasi'}">Hammasi <b>${ishlar.length}</b></button>
-    </div></div>
+  const varianti = (f, nom, n, yoq) => `<button role="menuitemradio" data-f="${f}" aria-checked="${S.filtr === f}" ${yoq ? 'disabled' : ''}>
+    <span class="fm-ok">${S.filtr === f ? ik('check') : ''}</span><span>${nom}</span><b>${n}</b></button>`;
+  const filtr = `<div class="filtr-joy"><button class="filtr-tugma${S.filtr === 'kut' ? ' faol' : ''}" id="filtrTugma" aria-haspopup="menu" aria-expanded="${!!S.filtrOchiq}"
+      aria-label="Saralash: ${S.filtr === 'kut' ? 'sizni kutyapti' : 'hammasi'}">${ik('list-filter')}</button>
+    ${S.filtrOchiq ? `<div class="filtr-menyu" role="menu">${varianti('kut', 'Sizni kutyapti', kut.length, !kut.length)}${varianti('hammasi', 'Hammasi', ishlar.length)}</div>` : ''}</div>`;
+  ilova.innerHTML = `<main>${bolimlar(filtr)}
+    <h1 class="sr">Update'lar — ${S.filtr === 'kut' ? 'sizni kutyapti' : 'hammasi'}</h1>
     ${korin.map(qatorHtml).join('')}</main>`;
-  ilova.querySelectorAll('[data-f]').forEach((b) => (b.onclick = () => { S.filtr = b.dataset.f; chiz(); }));
+  document.getElementById('filtrTugma').onclick = (e) => { e.stopPropagation(); S.filtrOchiq = !S.filtrOchiq; chiz(); };
+  ilova.querySelectorAll('[data-f]').forEach((b) => (b.onclick = () => { S.filtr = b.dataset.f; S.filtrOchiq = false; chiz(); }));
   ilova.querySelectorAll('[data-ish]').forEach((b) => (b.onclick = () => och(b.dataset.ish)));
   bolimUlash();
 }
@@ -249,6 +252,8 @@ const S = { data: null, ish: null, reliz: null, bolim: 'update', royxatdan: fals
 function och(nom) { S.ish = nom; S.royxatdan = true; S.ochiq.clear(); chiz(); scrollTo(0, 0); }
 function royxatga() { if (S.reliz) S.bolim = 'reliz'; S.ish = null; S.reliz = null; chiz(); scrollTo(0, 0); }
 tg?.BackButton?.onClick(royxatga);
+addEventListener('click', (e) => { if (S.filtrOchiq && !e.target.closest('.filtr-joy')) { S.filtrOchiq = false; chiz(); } });
+addEventListener('keydown', (e) => { if (e.key === 'Escape' && S.filtrOchiq) { S.filtrOchiq = false; chiz(); } });
 function chiz() {
   if (!S.data) return;
   if (S.ish) { tg?.BackButton?.show(); ishChiz(); } else if (S.reliz) { tg?.BackButton?.show(); relizChiz(); } else { tg?.BackButton?.hide(); royxatChiz(); }

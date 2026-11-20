@@ -238,3 +238,21 @@ a.mat .ik:last-child { color: var(--c-faint); width: 16px; height: 16px; }
 /* tablar bo'lsa — sarlavha takrorlanmaydi, filtr tablarning ostida ixcham qator */
 .bolimlar { margin-bottom: var(--s3); }
 .tepa-qator.ixcham { margin-bottom: var(--s3); }
+
+/* tablar + filtr tugmasi bitta qatorda (2026-11-20) */
+.bolimlar-qator { display: flex; gap: var(--s2); align-items: stretch; margin-bottom: var(--s3); }
+.bolimlar-qator .bolimlar { flex: 1; margin-bottom: 0; }
+.filtr-joy { position: relative; display: flex; }
+.filtr-tugma { position: relative; width: 48px; border-radius: 12px; border: 1px solid var(--c-border); background: var(--c-card); color: var(--c-muted);
+  display: grid; place-items: center; cursor: pointer; }
+.filtr-tugma .ik { width: 20px; height: 20px; }
+.filtr-tugma[aria-expanded="true"] { border-color: var(--c-primary); color: var(--c-fg); }
+.filtr-tugma.faol::after { content: ''; position: absolute; top: 8px; right: 8px; width: 8px; height: 8px; border-radius: 50%; background: var(--c-primary); }
+.filtr-menyu { position: absolute; z-index: 5; top: calc(100% + 6px); right: 0; min-width: 210px; padding: 4px; border-radius: 12px;
+  background: var(--c-card); border: 1px solid var(--c-border); box-shadow: 0 10px 30px rgba(0,0,0,.35); }
+.filtr-menyu button { width: 100%; display: grid; grid-template-columns: 20px 1fr auto; gap: var(--s2); align-items: center; min-height: 44px;
+  padding: 0 var(--s3); border: 0; border-radius: 9px; background: transparent; color: var(--c-fg); font: 500 15px var(--f-body, inherit); text-align: left; cursor: pointer; }
+.filtr-menyu button:hover:not(:disabled) { background: var(--c-primary-soft); }
+.filtr-menyu button:disabled { opacity: .45; cursor: default; }
+.filtr-menyu b { color: var(--c-faint); font-variant-numeric: tabular-nums; }
+.fm-ok .ik { width: 18px; height: 18px; color: var(--c-primary); }
