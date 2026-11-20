@@ -28,7 +28,7 @@ addEventListener('touchmove', (e) => { if (e.touches.length > 1) e.preventDefaul
 const QADAMLAR_HAMMASI = [
   { id: 'material', ikon: 'folder-fill', nom: 'Material', ich: ['qabul', 'transkript'], izoh: 'PM funksiya haqida ovoz, video yoki matn yuboradi' },
   { id: 'savollar', ikon: 'chat-circle-fill', nom: 'Savollar', ich: ['tahlil'], izoh: "Agent funksiyani tahlil qilib, tushunmagan joylarini so'raydi" },
-  { id: 'ssenariy', ikon: 'film-slate-fill', nom: 'Ssenariy', ich: ['ssenariy', 'loyiha-tasdiq'], izoh: 'Javoblardan keyin video sahnalari va diktor matni yoziladi — PM tasdiqlaydi' },
+  { id: 'ssenariy', ikon: 'film-slate-fill', nom: 'Ssenariy', ich: ['ssenariy', 'loyiha-tasdiq', 'qoshimcha'], izoh: 'Javoblardan keyin video sahnalari va diktor matni yoziladi — PM tasdiqlaydi' },
   { id: 'video', ikon: 'video-camera-fill', nom: 'Promo', ich: ['yasash', 'ovoz', 'render', 'tekshiruv', 'tuzatish'], izoh: "Agent 1 daqiqalik promo video yasaydi, PM va QA ko'radi" },
   { id: 'uzun', ikon: 'monitor-play-fill', nom: 'Uzun video', ich: ['uzun-ssenariy', 'uzun-loyiha-tasdiq', 'uzun-yasash', 'uzun-ovoz', 'uzun-render', 'uzun-tekshiruv', 'uzun-tuzatish'], izoh: "Batafsil video (texnik dars) — PM va QA ko'radi" },
   { id: 'elon', ikon: 'paper-plane-right-fill', nom: "E'lon", ich: ['youtube', 'elon-materiallari', 'elon'], izoh: "Uzun video YouTube'ga, promo post kanalga — ruxsat bilan" },
@@ -56,6 +56,7 @@ function holat(i) {
     tahlil: javobsiz ? { matn: `${javobsiz} ta savolga javob kerak`, kut: true, tugma: 'Chatda javob berish' } : { matn: 'Agent funksiyani tahlil qilyapti' },
     ssenariy: { matn: 'Agent ssenariy yozyapti' },
     'loyiha-tasdiq': { matn: 'Ssenariyni tasdiqlang yoki tuzating', kut: true, tugma: 'Chatda tasdiqlash' },
+    qoshimcha: { matn: "Video uchun yana material bormi? Bo'lmasa «yo'q» deng", kut: true, tugma: 'Chatda javob berish' },
     yasash: { matn: 'Agent video tayyorlayapti' }, ovoz: { matn: 'Agent video tayyorlayapti' }, render: { matn: 'Agent video tayyorlayapti' },
     tekshiruv: { matn: "Promo videoni ko'rib, fikr bildiring", kut: true, tugma: 'Chatda fikr bildirish' },
     tuzatish: { matn: "Agent izohlar bo'yicha tuzatyapti" },
@@ -209,7 +210,11 @@ function videoHtml(i) {
     <a class="mk-tg" href="${esc(i.mavzu)}" data-tg aria-label="Update topigini ochish">${ik('send-horizontal')}Ochish</a></div></li></ul>`;
   return '';
 }
-const ICHI = { material: materialHtml, savollar: savolHtml, ssenariy: sahnaHtml, video: videoHtml, elon: elonHtml };
+// Ssenariy qadami: sahnalar + ssenariydan keyin kelgan qo'shimcha materiallar
+const ssenariyHtml = (i) => sahnaHtml(i) + (i.qoshimcha?.length ? `<h3 class="kichik-sarlavha">Qo'shimcha material · ${i.qoshimcha.length}</h3><ul class="materiallar">${i.qoshimcha.map((m) =>
+  `<li class="mk"><div class="mk-bosh"><span class="mk-ik">${ik(/\.(mp4|mov|webm|mkv)$/i.test(m.fayl) ? 'video' : /\.(png|jpe?g|webp)$/i.test(m.fayl) ? 'image' : 'file-text')}</span>
+  <div class="mk-nom"><b>${esc(m.izoh || m.fayl)}</b><span>${esc([m.kim, sana(m.vaqt)].filter(Boolean).join(' · '))}</span></div></div></li>`).join('')}</ul>` : '');
+const ICHI = { material: materialHtml, savollar: savolHtml, ssenariy: ssenariyHtml, video: videoHtml, elon: elonHtml };
 
 function ishChiz() {
   const i = S.data.ishlar.find((x) => x.nom === S.ish);
