@@ -2,7 +2,7 @@
 // Dizayn: UI UX Pro Max skill — "Logistics/Delivery": posilka kuzatuvidek. Update sahifasida 5 qadam vertikal yo'l bo'lib turadi,
 // har qadamning materiali o'z ichida (Material — PM fayllari, Savollar — savol va javoblar, Ssenariy — kadrli sahnalar).
 // Ma'lumot A bilan bir xil: updater-api.osonacademy.uz/api/ishlar.
-import { IK, PH } from './ikonlar.js?v=20261120t'; // ?v= — Telegram eski nusxani keshdan bermasin; fayl o'zgarsa raqamni yangilang
+import { IK, PH } from './ikonlar.js?v=20261121a'; // ?v= — Telegram eski nusxani keshdan bermasin; fayl o'zgarsa raqamni yangilang
 
 const API = 'https://updater-api.osonacademy.uz/api';
 const tg = window.Telegram?.WebApp;
@@ -328,7 +328,10 @@ async function ol(birinchi) {
 if (!INIT) {
   ilova.innerHTML = `<main>${bosh('lock', 'Telegram orqali oching', "Sahifa Oson Updater xabaridagi «Holatni ko'rish» tugmasi bilan ochiladi.")}</main>`;
 } else {
-  { const q = new URLSearchParams(location.search); S.ish = q.has('ish') ? q.get('ish') || null : tg?.initDataUnsafe?.start_param || null; }
+  // ?ish=<nom> / ?reliz=<id> yoki Telegram startapp: "<nom>" — update sahifasi, "reliz-<id>" — reliz sahifasi
+  { const q = new URLSearchParams(location.search); const sp = tg?.initDataUnsafe?.start_param || '';
+    if (q.get('reliz') || sp.startsWith('reliz-')) { S.reliz = q.get('reliz') || sp.slice(6); S.bolim = 'reliz'; }
+    else S.ish = q.has('ish') ? q.get('ish') || null : sp || null; }
   ilova.innerHTML = `<main><div class="skelet"></div><div class="skelet"></div><div class="skelet"></div></main>`;
   ol(true);
   setInterval(() => ol(false), 10000);
