@@ -2,7 +2,7 @@
 // Dizayn: UI UX Pro Max skill — "Logistics/Delivery": posilka kuzatuvidek. Update sahifasida 5 qadam vertikal yo'l bo'lib turadi,
 // har qadamning materiali o'z ichida (Material — PM fayllari, Savollar — savol va javoblar, Ssenariy — kadrli sahnalar).
 // Ma'lumot A bilan bir xil: updater-api.osonacademy.uz/api/ishlar.
-import { IK, PH } from './ikonlar.js?v=20261124a'; // ?v= — Telegram eski nusxani keshdan bermasin; fayl o'zgarsa raqamni yangilang
+import { IK, PH } from './ikonlar.js?v=20261124b'; // ?v= — Telegram eski nusxani keshdan bermasin; fayl o'zgarsa raqamni yangilang
 
 const API = 'https://updater-api.osonacademy.uz/api';
 const tg = window.Telegram?.WebApp;
@@ -30,8 +30,9 @@ const QADAMLAR_HAMMASI = [
   { id: 'savollar', ikon: 'chat-circle-fill', nom: 'Savollar', ich: ['tahlil'], izoh: "Agent funksiyani tahlil qilib, tushunmagan joylarini so'raydi" },
   { id: 'ssenariy', ikon: 'film-slate-fill', nom: 'Ssenariy', ich: ['ssenariy', 'loyiha-tasdiq', 'qoshimcha'], izoh: 'Javoblardan keyin video sahnalari va diktor matni yoziladi — PM tasdiqlaydi' },
   { id: 'video', ikon: 'video-camera-fill', nom: 'Promo', ich: ['yasash', 'ovoz', 'render', 'tekshiruv', 'tuzatish'], izoh: "Agent 1 daqiqalik promo video yasaydi, PM va QA ko'radi" },
-  { id: 'uzun', ikon: 'monitor-play-fill', nom: 'Uzun video', ich: ['uzun-ssenariy', 'uzun-loyiha-tasdiq', 'uzun-yasash', 'uzun-ovoz', 'uzun-render', 'uzun-tekshiruv', 'uzun-tuzatish'], izoh: "Batafsil video (texnik dars) — PM va QA ko'radi" },
-  { id: 'elon', ikon: 'paper-plane-right-fill', nom: "E'lon", ich: ['youtube', 'elon-materiallari', 'elon'], izoh: "Uzun video YouTube'ga, promo post kanalga — ruxsat bilan" },
+  // 2026-11-24 (Abdulloh): kanalga faqat promo chiqadi — e'lon promo'dan keyin darhol; uzun video e'lon qilinmaydi (YouTube va LMS)
+  { id: 'elon', ikon: 'paper-plane-right-fill', nom: "E'lon", ich: ['elon-materiallari', 'elon'], izoh: 'Promo video va post kanalga — ruxsat bilan' },
+  { id: 'uzun', ikon: 'monitor-play-fill', nom: 'Uzun video', ich: ['uzun-ssenariy', 'uzun-loyiha-tasdiq', 'uzun-yasash', 'uzun-ovoz', 'uzun-render', 'uzun-tekshiruv', 'uzun-tuzatish', 'youtube'], izoh: "Batafsil video (texnik dars) — PM va QA ko'radi, YouTube'ga joylanadi" },
   { id: 'oqitish', ikon: 'graduation-cap-fill', nom: "O'qitish", ich: ['test', 'lms'], izoh: "Uzun video va test Exode'ga — xodimlar o'rganadi" },
 ];
 // uzun video to'xtatilgan bo'lsa (bosqichlari ro'yxatda yo'q) — "Uzun video" va "O'qitish" qadamlari joyida qoladi, lekin xira (toxtagan)
@@ -39,11 +40,10 @@ const QADAMLAR_HAMMASI = [
 const UZUN_ICH = ['uzun-ssenariy', 'uzun-loyiha-tasdiq', 'uzun-yasash', 'uzun-ovoz', 'uzun-render', 'uzun-tekshiruv', 'uzun-tuzatish'];
 const qadamlar = (i) => {
   const bor = new Set([...(S.data?.bosqichlar || []).map((b) => b.id), ...(i?.uzun ? UZUN_ICH : [])]);
-  const uzun = bor.has('youtube');
   return QADAMLAR_HAMMASI.map((q) => {
     const ich = q.ich.filter((id) => bor.has(id));
     if (!ich.length) return { ...q, toxtagan: true };
-    return { ...q, ich, ...(q.id === 'elon' && !uzun ? { izoh: "Promo video va post kanalga — ruxsat bilan" } : {}) };
+    return { ...q, ich };
   });
 };
 // hozirgi holat → bir jumla; kut: odamdan javob kutilyapti
