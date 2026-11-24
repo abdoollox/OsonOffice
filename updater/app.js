@@ -2,7 +2,7 @@
 // Dizayn: UI UX Pro Max skill — "Logistics/Delivery": posilka kuzatuvidek. Update sahifasida 5 qadam vertikal yo'l bo'lib turadi,
 // har qadamning materiali o'z ichida (Material — PM fayllari, Savollar — savol va javoblar, Ssenariy — kadrli sahnalar).
 // Ma'lumot A bilan bir xil: updater-api.osonacademy.uz/api/ishlar.
-import { IK, PH } from './ikonlar.js?v=20261124d'; // ?v= — Telegram eski nusxani keshdan bermasin; fayl o'zgarsa raqamni yangilang
+import { IK, PH } from './ikonlar.js?v=20261124e'; // ?v= — Telegram eski nusxani keshdan bermasin; fayl o'zgarsa raqamni yangilang
 
 const API = 'https://updater-api.osonacademy.uz/api';
 const tg = window.Telegram?.WebApp;
@@ -195,11 +195,11 @@ function relizChiz() {
       ${h.kut && r.mavzu ? `<a class="tugma" href="${esc(r.mavzu)}" data-tg>${ik('message-circle')}${esc(h.tugma)}</a>` : ''}</section>
     <ol class="yol" aria-label="Qadamlar">${RQ.map((q, n) => {
       const hol = rqHol(r, q), ichi = ICH[q.id] || '';
-      const ochiq = hol === 'h' || S.ochiq.has('r-' + q.id);
+      const ochiq = (hol === 'h') !== S.ochiq.has('r-' + q.id); // joriy qadam standart ochiq, bosilsa yopiladi
       const bosh = `<span class="yq-nom">${q.nom}</span><span class="yq-vaqt">${hol === 't' ? esc(rqVaqt(r, q.id)) : hol === 'h' ? 'hozir' : ''}</span>`;
       return `<li class="yq ${hol}${hol === 'h' && h.kut ? ' kut' : ''}" ${hol === 'h' ? 'aria-current="step"' : ''}>
         <span class="nuqta">${hol === 't' ? ik('check') : n + 1}</span>
-        ${ichi && hol === 't' ? `<button class="yq-bosh" data-q="r-${q.id}" aria-expanded="${ochiq}">${bosh}${ik('chevron-right')}</button>` : `<div class="yq-bosh">${bosh}</div>`}
+        ${ichi && (hol === 't' || hol === 'h') ? `<button class="yq-bosh" data-q="r-${q.id}" aria-expanded="${ochiq}">${bosh}${ik('chevron-right')}</button>` : `<div class="yq-bosh">${bosh}</div>`}
         ${ichi && ochiq ? `<div class="yq-ich">${ichi}</div>` : hol === '' || (hol === 'h' && !ichi) ? `<p class="yq-izoh">${q.izoh}</p>` : ''}
       </li>`;
     }).join('')}</ol>
@@ -300,11 +300,11 @@ function ishChiz() {
     <ol class="yol" aria-label="Qadamlar">${Q.map((q, n) => {
       const hol = qadamHol(i, q), ichi = ICHI[q.id]?.(i) || '';
       // joriy qadam doim ochiq; tayyorlari — bosilsa ochiladi; keyingilari — izoh bilan
-      const ochiq = hol === 'h' || hol === 'p' || S.ochiq.has(q.id);
+      const ochiq = (hol === 'h' || hol === 'p') !== S.ochiq.has(q.id); // joriy va qisman tayyor qadam standart ochiq, bosilsa yopiladi (Abdulloh, 2026-11-24)
       const bosh = `<span class="yq-nom">${q.nom}</span><span class="yq-vaqt">${hol === 't' ? esc(qadamVaqt(i, q)) : hol === 'h' ? 'hozir' : ''}</span>`;
       return `<li class="yq ${hol}${hol === 'h' && h.kut ? ' kut' : ''}" ${hol === 'h' ? 'aria-current="step"' : ''}>
         <span class="nuqta">${hol === 't' ? ik('check') : hol === 'o' ? '–' : n + 1}</span>
-        ${ichi && hol === 't' ? `<button class="yq-bosh" data-q="${q.id}" aria-expanded="${ochiq}">${bosh}${ik('chevron-right')}</button>` : `<div class="yq-bosh">${bosh}</div>`}
+        ${ichi && (hol === 't' || hol === 'h' || hol === 'p') ? `<button class="yq-bosh" data-q="${q.id}" aria-expanded="${ochiq}">${bosh}${ik('chevron-right')}</button>` : `<div class="yq-bosh">${bosh}</div>`}
         ${ichi && ochiq ? `<div class="yq-ich">${ichi}</div>` : hol === '' ? `<p class="yq-izoh">${q.izoh}</p>` : hol === 'o' ? `<p class="yq-izoh">${q.toxtagan ? "Hozircha to'xtatilgan" : 'Bu update uchun kerak emas'}</p>` : ''}
       </li>`;
     }).join('')}</ol>
