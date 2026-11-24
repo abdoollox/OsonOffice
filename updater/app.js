@@ -2,7 +2,7 @@
 // Dizayn: UI UX Pro Max skill — "Logistics/Delivery": posilka kuzatuvidek. Update sahifasida 5 qadam vertikal yo'l bo'lib turadi,
 // har qadamning materiali o'z ichida (Material — PM fayllari, Savollar — savol va javoblar, Ssenariy — kadrli sahnalar).
 // Ma'lumot A bilan bir xil: updater-api.osonacademy.uz/api/ishlar.
-import { IK, PH } from './ikonlar.js?v=20261124e'; // ?v= — Telegram eski nusxani keshdan bermasin; fayl o'zgarsa raqamni yangilang
+import { IK, PH } from './ikonlar.js?v=20261124f'; // ?v= — Telegram eski nusxani keshdan bermasin; fayl o'zgarsa raqamni yangilang
 
 const API = 'https://updater-api.osonacademy.uz/api';
 const tg = window.Telegram?.WebApp;
@@ -276,8 +276,12 @@ const ssenariyHtml = (i) => sahnaHtml(i) + (i.qoshimcha?.length ? `<h3 class="ki
   <div class="mk-nom"><b>${esc(m.izoh || m.fayl)}</b><span>${esc([m.kim, sana(m.vaqt)].filter(Boolean).join(' · '))}</span></div></div></li>`).join('')}</ul>` : '');
 // Test (2026-11-24): savollar va 4 variant, to'g'ri javob yashil belgi bilan; Excel fayli topikda (test.xlsx)
 function testHtml(i) {
-  if (!i.test?.length) return '';
-  return `<p class="yq-izoh">${i.test.length} ta savol — uzun video bo'yicha. Excel fayli update topigida.</p><ol class="quti ro">${i.test.map((q, n) => `<li class="tsavol">
+  // Exode darsi (lms bosqichi, exode.mjs): bosilsa admin panelda ochiladi
+  const ex = i.exode ? `<ul class="materiallar"><li class="mk"><div class="mk-bosh"><span class="mk-ik">${ik('video')}</span>
+    <div class="mk-nom"><b>Exode darsi</b><span>${esc(i.exode.nomi || '')} · ${i.exode.nashr ? 'nashr qilingan' : 'qoralama'}</span></div>
+    <a class="mk-tg" href="${esc(i.exode.havola)}" target="_blank" rel="noopener">${ik('globe')}Ochish</a></div></li></ul>` : '';
+  if (!i.test?.length) return ex;
+  return ex + `<p class="yq-izoh">${i.test.length} ta savol — uzun video bo'yicha. Excel fayli update topigida.</p><ol class="quti ro">${i.test.map((q, n) => `<li class="tsavol">
     <p><b>${n + 1}.</b> ${esc(q.savol)}</p><ul>${(q.variantlar || []).map((v, k) => `<li class="${k === q.togri ? 'togri' : ''}">${k === q.togri ? ik('check') : '<span class="tv"></span>'}<span>${'ABCD'[k]}) ${esc(v)}</span></li>`).join('')}</ul>
     ${q.manba ? `<small>Videoda: ${esc(q.manba)}</small>` : ''}</li>`).join('')}</ol>`;
 }
