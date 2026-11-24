@@ -2,7 +2,7 @@
 // Dizayn: UI UX Pro Max skill — "Logistics/Delivery": posilka kuzatuvidek. Update sahifasida 5 qadam vertikal yo'l bo'lib turadi,
 // har qadamning materiali o'z ichida (Material — PM fayllari, Savollar — savol va javoblar, Ssenariy — kadrli sahnalar).
 // Ma'lumot A bilan bir xil: updater-api.osonacademy.uz/api/ishlar.
-import { IK, PH } from './ikonlar.js?v=20261124b'; // ?v= — Telegram eski nusxani keshdan bermasin; fayl o'zgarsa raqamni yangilang
+import { IK, PH } from './ikonlar.js?v=20261124c'; // ?v= — Telegram eski nusxani keshdan bermasin; fayl o'zgarsa raqamni yangilang
 
 const API = 'https://updater-api.osonacademy.uz/api';
 const tg = window.Telegram?.WebApp;
@@ -33,11 +33,11 @@ const QADAMLAR_HAMMASI = [
   // 2026-11-24 (Abdulloh): kanalga faqat promo chiqadi — e'lon promo'dan keyin darhol; uzun video e'lon qilinmaydi (YouTube va LMS)
   { id: 'elon', ikon: 'paper-plane-right-fill', nom: "E'lon", ich: ['elon-materiallari', 'elon'], izoh: 'Promo video va post kanalga — ruxsat bilan' },
   { id: 'uzun', ikon: 'monitor-play-fill', nom: 'Uzun video', ich: ['uzun-ssenariy', 'uzun-loyiha-tasdiq', 'uzun-yasash', 'uzun-ovoz', 'uzun-render', 'uzun-tekshiruv', 'uzun-tuzatish', 'youtube'], izoh: "Batafsil video (texnik dars) — PM va QA ko'radi, YouTube'ga joylanadi" },
-  { id: 'oqitish', ikon: 'graduation-cap-fill', nom: "O'qitish", ich: ['test', 'lms'], izoh: "Uzun video va test Exode'ga — xodimlar o'rganadi" },
+  { id: 'oqitish', ikon: 'graduation-cap-fill', nom: 'Test', ich: ['test-yozish', 'test', 'lms'], izoh: "Agent uzun video bo'yicha test tuzadi, Akademiya tekshiradi" },
 ];
 // uzun video to'xtatilgan bo'lsa (bosqichlari ro'yxatda yo'q) — "Uzun video" va "O'qitish" qadamlari joyida qoladi, lekin xira (toxtagan)
 // i.uzun — shu update uchun uzun video yoqilgan (umumiy kalit o'chiq bo'lsa ham; YouTube/test/Exode hali qurilmagan)
-const UZUN_ICH = ['uzun-ssenariy', 'uzun-loyiha-tasdiq', 'uzun-yasash', 'uzun-ovoz', 'uzun-render', 'uzun-tekshiruv', 'uzun-tuzatish'];
+const UZUN_ICH = ['uzun-ssenariy', 'uzun-loyiha-tasdiq', 'uzun-yasash', 'uzun-ovoz', 'uzun-render', 'uzun-tekshiruv', 'uzun-tuzatish', 'test-yozish', 'test'];
 const qadamlar = (i) => {
   const bor = new Set([...(S.data?.bosqichlar || []).map((b) => b.id), ...(i?.uzun ? UZUN_ICH : [])]);
   return QADAMLAR_HAMMASI.map((q) => {
@@ -69,7 +69,8 @@ function holat(i) {
     'uzun-tuzatish': { matn: "Agent izohlar bo'yicha tuzatyapti" },
     youtube: { matn: "Agent uzun videoni YouTube'ga joylayapti" },
     'elon-materiallari': { matn: 'Agent post matnini tayyorlayapti' },
-    test: { matn: 'Test savollarini tekshirish kerak', kut: true, tugma: 'Chatda tasdiqlash' },
+    'test-yozish': { matn: 'Agent test savollarini tuzyapti' },
+    test: { matn: "Test savollarini tekshiring — Akademiya tasdig'i", kut: true, tugma: 'Chatda tasdiqlash' },
     lms: { matn: "Agent video va testni Exode'ga joylayapti" },
     elon: { matn: "Tayyor postni kanalga forward qiling", kut: true, tugma: 'Topikni ochish' },
   }[i.navbatdagi] || { matn: 'Ishlanyapti' };
@@ -263,7 +264,14 @@ function videoHtml(i) {
 const ssenariyHtml = (i) => sahnaHtml(i) + (i.qoshimcha?.length ? `<h3 class="kichik-sarlavha">Qo'shimcha material · ${i.qoshimcha.length}</h3><ul class="materiallar">${i.qoshimcha.map((m) =>
   `<li class="mk"><div class="mk-bosh"><span class="mk-ik">${ik(/\.(mp4|mov|webm|mkv)$/i.test(m.fayl) ? 'video' : /\.(png|jpe?g|webp)$/i.test(m.fayl) ? 'image' : 'file-text')}</span>
   <div class="mk-nom"><b>${esc(m.izoh || m.fayl)}</b><span>${esc([m.kim, sana(m.vaqt)].filter(Boolean).join(' · '))}</span></div></div></li>`).join('')}</ul>` : '');
-const ICHI = { material: materialHtml, savollar: savolHtml, ssenariy: ssenariyHtml, video: videoHtml, elon: elonHtml };
+// Test (2026-11-24): savollar va 4 variant, to'g'ri javob yashil belgi bilan; Excel fayli topikda (test.xlsx)
+function testHtml(i) {
+  if (!i.test?.length) return '';
+  return `<p class="yq-izoh">${i.test.length} ta savol — uzun video bo'yicha. Excel fayli update topigida.</p><ol class="quti ro">${i.test.map((q, n) => `<li class="tsavol">
+    <p><b>${n + 1}.</b> ${esc(q.savol)}</p><ul>${(q.variantlar || []).map((v, k) => `<li class="${k === q.togri ? 'togri' : ''}">${k === q.togri ? ik('check') : '<span class="tv"></span>'}<span>${'ABCD'[k]}) ${esc(v)}</span></li>`).join('')}</ul>
+    ${q.manba ? `<small>Videoda: ${esc(q.manba)}</small>` : ''}</li>`).join('')}</ol>`;
+}
+const ICHI = { material: materialHtml, savollar: savolHtml, ssenariy: ssenariyHtml, video: videoHtml, elon: elonHtml, oqitish: testHtml };
 
 function ishChiz() {
   const i = S.data.ishlar.find((x) => x.nom === S.ish);
