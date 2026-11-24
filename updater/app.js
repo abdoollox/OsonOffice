@@ -2,7 +2,7 @@
 // Dizayn: UI UX Pro Max skill — "Logistics/Delivery": posilka kuzatuvidek. Update sahifasida 5 qadam vertikal yo'l bo'lib turadi,
 // har qadamning materiali o'z ichida (Material — PM fayllari, Savollar — savol va javoblar, Ssenariy — kadrli sahnalar).
 // Ma'lumot A bilan bir xil: updater-api.osonacademy.uz/api/ishlar.
-import { IK, PH } from './ikonlar.js?v=20261124c'; // ?v= — Telegram eski nusxani keshdan bermasin; fayl o'zgarsa raqamni yangilang
+import { IK, PH } from './ikonlar.js?v=20261124d'; // ?v= — Telegram eski nusxani keshdan bermasin; fayl o'zgarsa raqamni yangilang
 
 const API = 'https://updater-api.osonacademy.uz/api';
 const tg = window.Telegram?.WebApp;
@@ -79,7 +79,9 @@ const qadamHol = (i, q) => {
   if (q.toxtagan) return 'o'; // hozircha to'xtatilgan (uzun video)
   if (q.ich.every((id) => i.bosqichlar[id]?.holat === 'otkazildi')) return 'o'; // bu ishga tegishli emas
   if (q.ich.every((id) => ['tayyor', 'otkazildi'].includes(i.bosqichlar[id]?.holat))) return 't';
-  return q.ich.includes(i.navbatdagi) ? 'h' : '';
+  if (q.ich.includes(i.navbatdagi)) return 'h';
+  // qisman — joriy qadamdan keyin, lekin ichidan biror ish allaqachon qilingan (masalan, e'lon kutilayotganda uzun video va test tayyor) — ichi ko'rinadi
+  return q.ich.some((id) => i.bosqichlar[id]?.holat === 'tayyor') ? 'p' : '';
 };
 const qadamVaqt = (i, q) => sana(q.ich.map((id) => i.bosqichlar[id]?.vaqt).filter(Boolean).sort().at(-1));
 const mahsulot = (m) => (m === 'kassa' ? 'Oson Kassa' : m === 'price' ? 'Oson Price' : '');
@@ -241,9 +243,17 @@ function sahnaHtml(i) {
       <div class="kadr-rasm${x.eskiz?.ikonlar?.length ? ` eskiz ${x.eskiz.ton}` : ''}">${x.rasm ? `<img src="${x.rasm}" alt="" loading="lazy">` : eskizHtml(x)}<span class="kadr-n">${esc(x.n)}</span></div>
       <div class="kadr-matn"><b>${esc(x.nom)}</b>${(x.rasm || x.eskiz?.ikonlar?.length) && x.ekran ? `<p class="kadr-ekran">${esc(x.ekran)}</p>` : ''}${x.diktor ? `<p>«${esc(x.diktor)}»</p>` : ''}</div></article>`).join('')}</div>
     <p class="sanoq">${s.length} sahna — chapga suring</p>` : '';
-  const toliq = (i.loyiha ? `<details class="ochiq quti" style="padding: var(--s3)"><summary>Promo ssenariysining to'liq matni</summary><div class="matn">${esc(i.loyiha)}</div></details>` : '')
-    + (i.uzunLoyiha && qadamlar(i).some((q) => q.id === 'uzun' && !q.toxtagan) ? `<details class="ochiq quti" style="padding: var(--s3)"><summary>Uzun video ssenariysi</summary><div class="matn">${esc(i.uzunLoyiha)}</div></details>` : '');
+  const toliq = i.loyiha ? `<details class="ochiq quti" style="padding: var(--s3)"><summary>Promo ssenariysining to'liq matni</summary><div class="matn">${esc(i.loyiha)}</div></details>` : '';
   return tasma + toliq;
+}
+// Uzun video qadami (2026-11-24): guruhdagi uzun video xabari (bosilsa Telegram'da ochiladi) va uzun video ssenariysi
+function uzunHtml(i) {
+  const v = i.videolar?.uzun;
+  const video = v ? `<ul class="materiallar"><li class="mk"><div class="mk-bosh"><span class="mk-ik">${ik('video')}</span>
+    <div class="mk-nom"><b>Uzun video</b><span>16:9 · YouTube va xodimlar platformasi uchun · ${esc(sana(v.vaqt))}</span></div>
+    <a class="mk-tg" href="${esc(v.havola)}" data-tg aria-label="Uzun video — Telegram'da ochish">${ik('send-horizontal')}Ochish</a></div></li></ul>` : '';
+  const ssenariy = i.uzunLoyiha ? `<details class="ochiq quti" style="padding: var(--s3)"><summary>Uzun video ssenariysi</summary><div class="matn">${esc(i.uzunLoyiha)}</div></details>` : '';
+  return video + ssenariy;
 }
 // E'lon: kanal uchun tayyor post matni (Telegram'dagi ko'rinishiga yaqin: qalin — **…**)
 const elonHtml = (i) => (i.post ? `<p class="yq-izoh">Kanal uchun tayyor post. Videosi bilan birga update topigida — o'shani kanalga forward qiling.</p><div class="quti"><div class="matn">${esc(i.post).replace(/\*\*([^*\n]+)\*\*/g, '<b>$1</b>')}</div></div>` : '');
@@ -271,7 +281,7 @@ function testHtml(i) {
     <p><b>${n + 1}.</b> ${esc(q.savol)}</p><ul>${(q.variantlar || []).map((v, k) => `<li class="${k === q.togri ? 'togri' : ''}">${k === q.togri ? ik('check') : '<span class="tv"></span>'}<span>${'ABCD'[k]}) ${esc(v)}</span></li>`).join('')}</ul>
     ${q.manba ? `<small>Videoda: ${esc(q.manba)}</small>` : ''}</li>`).join('')}</ol>`;
 }
-const ICHI = { material: materialHtml, savollar: savolHtml, ssenariy: ssenariyHtml, video: videoHtml, elon: elonHtml, oqitish: testHtml };
+const ICHI = { material: materialHtml, savollar: savolHtml, ssenariy: ssenariyHtml, video: videoHtml, elon: elonHtml, uzun: uzunHtml, oqitish: testHtml };
 
 function ishChiz() {
   const i = S.data.ishlar.find((x) => x.nom === S.ish);
@@ -290,7 +300,7 @@ function ishChiz() {
     <ol class="yol" aria-label="Qadamlar">${Q.map((q, n) => {
       const hol = qadamHol(i, q), ichi = ICHI[q.id]?.(i) || '';
       // joriy qadam doim ochiq; tayyorlari — bosilsa ochiladi; keyingilari — izoh bilan
-      const ochiq = hol === 'h' || S.ochiq.has(q.id);
+      const ochiq = hol === 'h' || hol === 'p' || S.ochiq.has(q.id);
       const bosh = `<span class="yq-nom">${q.nom}</span><span class="yq-vaqt">${hol === 't' ? esc(qadamVaqt(i, q)) : hol === 'h' ? 'hozir' : ''}</span>`;
       return `<li class="yq ${hol}${hol === 'h' && h.kut ? ' kut' : ''}" ${hol === 'h' ? 'aria-current="step"' : ''}>
         <span class="nuqta">${hol === 't' ? ik('check') : hol === 'o' ? '–' : n + 1}</span>
@@ -298,8 +308,8 @@ function ishChiz() {
         ${ichi && ochiq ? `<div class="yq-ich">${ichi}</div>` : hol === '' ? `<p class="yq-izoh">${q.izoh}</p>` : hol === 'o' ? `<p class="yq-izoh">${q.toxtagan ? "Hozircha to'xtatilgan" : 'Bu update uchun kerak emas'}</p>` : ''}
       </li>`;
     }).join('')}</ol>
-    ${S.data.ega ? `<details class="ichki" id="ichki" ${S.ichkiOchiq ? 'open' : ''}><summary>${ik('list-checks')}Jamoa uchun: ${S.data.bosqichlar.length} ichki bosqich</summary>
-      <ol>${S.data.bosqichlar.map((b) => { const s = i.bosqichlar[b.id]; return `<li class="${s?.holat === 'tayyor' ? 't' : b.id === i.navbatdagi ? 'j' : ''}">${esc(b.nomi)}${s?.vaqt ? ` · ${esc(s.vaqt.slice(5, 16))}` : ''}</li>`; }).join('')}</ol></details>` : ''}
+    ${S.data.ega ? `<details class="ichki" id="ichki" ${S.ichkiOchiq ? 'open' : ''}><summary>${ik('list-checks')}Jamoa uchun: ${(i.royxat || S.data.bosqichlar).length} ichki bosqich</summary>
+      <ol>${(i.royxat || S.data.bosqichlar).map((b) => { const s = i.bosqichlar[b.id]; return `<li class="${s?.holat === 'tayyor' ? 't' : b.id === i.navbatdagi ? 'j' : ''}">${esc(b.nomi)}${s?.vaqt ? ` · ${esc(s.vaqt.slice(5, 16))}` : ''}</li>`; }).join('')}</ol></details>` : ''}
   </main>`;
   document.getElementById('orqa')?.addEventListener('click', royxatga);
   document.getElementById('relizga')?.addEventListener('click', () => { S.reliz = i.reliz.id; S.ish = null; S.royxatdan = true; chiz(); scrollTo(0, 0); });
