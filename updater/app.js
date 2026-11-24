@@ -2,7 +2,7 @@
 // Dizayn: UI UX Pro Max skill — "Logistics/Delivery": posilka kuzatuvidek. Update sahifasida 5 qadam vertikal yo'l bo'lib turadi,
 // har qadamning materiali o'z ichida (Material — PM fayllari, Savollar — savol va javoblar, Ssenariy — kadrli sahnalar).
 // Ma'lumot A bilan bir xil: updater-api.osonacademy.uz/api/ishlar.
-import { IK, PH } from './ikonlar.js?v=20261121a'; // ?v= — Telegram eski nusxani keshdan bermasin; fayl o'zgarsa raqamni yangilang
+import { IK, PH } from './ikonlar.js?v=20261124a'; // ?v= — Telegram eski nusxani keshdan bermasin; fayl o'zgarsa raqamni yangilang
 
 const API = 'https://updater-api.osonacademy.uz/api';
 const tg = window.Telegram?.WebApp;
@@ -35,8 +35,10 @@ const QADAMLAR_HAMMASI = [
   { id: 'oqitish', ikon: 'graduation-cap-fill', nom: "O'qitish", ich: ['test', 'lms'], izoh: "Uzun video va test Exode'ga — xodimlar o'rganadi" },
 ];
 // uzun video to'xtatilgan bo'lsa (bosqichlari ro'yxatda yo'q) — "Uzun video" va "O'qitish" qadamlari joyida qoladi, lekin xira (toxtagan)
-const qadamlar = () => {
-  const bor = new Set((S.data?.bosqichlar || []).map((b) => b.id));
+// i.uzun — shu update uchun uzun video yoqilgan (umumiy kalit o'chiq bo'lsa ham; YouTube/test/Exode hali qurilmagan)
+const UZUN_ICH = ['uzun-ssenariy', 'uzun-loyiha-tasdiq', 'uzun-yasash', 'uzun-ovoz', 'uzun-render', 'uzun-tekshiruv', 'uzun-tuzatish'];
+const qadamlar = (i) => {
+  const bor = new Set([...(S.data?.bosqichlar || []).map((b) => b.id), ...(i?.uzun ? UZUN_ICH : [])]);
   const uzun = bor.has('youtube');
   return QADAMLAR_HAMMASI.map((q) => {
     const ich = q.ich.filter((id) => bor.has(id));
@@ -91,7 +93,7 @@ function qatorHtml(i) {
     <div><div class="qator-dastur ${i.mahsulot === 'price' ? 'price' : 'kassa'}">${mahsulot(i.mahsulot)}</div><div class="qator-nom">${esc(nomi(i))}</div>
       <p class="qator-holat">${esc(h.matn)}</p>
       ${i.reliz ? `<span class="chip reliz-chip">${ikf('rocket-launch-fill')}${esc(i.reliz.nomi)}</span>` : ''}
-      <ol class="belgilar" aria-label="Qadamlar">${qadamlar().map((q) => { const hol = qadamHol(i, q); return `<li class="${hol}${hol === 'h' && h.kut ? ' kut' : ''}"><span class="b-ik">${ikf(q.ikon)}${hol === 't' ? `<span class="b-ok">${ikf('check-bold')}</span>` : ''}</span><span class="b-nom">${q.nom}</span><span class="sr">${hol === 't' ? ' — bajarildi' : hol === 'h' ? ' — hozir' : hol === 'o' ? (q.toxtagan ? " — hozircha to'xtatilgan" : ' — kerak emas') : ''}</span></li>`; }).join('')}</ol></div>${ik('chevron-right')}</button>`;
+      <ol class="belgilar" aria-label="Qadamlar">${qadamlar(i).map((q) => { const hol = qadamHol(i, q); return `<li class="${hol}${hol === 'h' && h.kut ? ' kut' : ''}"><span class="b-ik">${ikf(q.ikon)}${hol === 't' ? `<span class="b-ok">${ikf('check-bold')}</span>` : ''}</span><span class="b-nom">${q.nom}</span><span class="sr">${hol === 't' ? ' — bajarildi' : hol === 'h' ? ' — hozir' : hol === 'o' ? (q.toxtagan ? " — hozircha to'xtatilgan" : ' — kerak emas') : ''}</span></li>`; }).join('')}</ol></div>${ik('chevron-right')}</button>`;
 }
 // bo'limlar: Update'lar | Relizlar (relizlar bo'lsa)
 // tablar qatori; o'ngda — filtr tugmasi (faqat Update'lar tabida): bosilsa menyu "Sizni kutyapti / Hammasi" (Abdulloh, 2026-11-20)
@@ -239,7 +241,7 @@ function sahnaHtml(i) {
       <div class="kadr-matn"><b>${esc(x.nom)}</b>${(x.rasm || x.eskiz?.ikonlar?.length) && x.ekran ? `<p class="kadr-ekran">${esc(x.ekran)}</p>` : ''}${x.diktor ? `<p>«${esc(x.diktor)}»</p>` : ''}</div></article>`).join('')}</div>
     <p class="sanoq">${s.length} sahna — chapga suring</p>` : '';
   const toliq = (i.loyiha ? `<details class="ochiq quti" style="padding: var(--s3)"><summary>Promo ssenariysining to'liq matni</summary><div class="matn">${esc(i.loyiha)}</div></details>` : '')
-    + (i.uzunLoyiha && qadamlar().some((q) => q.id === 'uzun' && !q.toxtagan) ? `<details class="ochiq quti" style="padding: var(--s3)"><summary>Uzun video ssenariysi</summary><div class="matn">${esc(i.uzunLoyiha)}</div></details>` : '');
+    + (i.uzunLoyiha && qadamlar(i).some((q) => q.id === 'uzun' && !q.toxtagan) ? `<details class="ochiq quti" style="padding: var(--s3)"><summary>Uzun video ssenariysi</summary><div class="matn">${esc(i.uzunLoyiha)}</div></details>` : '');
   return tasma + toliq;
 }
 // E'lon: kanal uchun tayyor post matni (Telegram'dagi ko'rinishiga yaqin: qalin — **…**)
@@ -266,7 +268,7 @@ const ICHI = { material: materialHtml, savollar: savolHtml, ssenariy: ssenariyHt
 function ishChiz() {
   const i = S.data.ishlar.find((x) => x.nom === S.ish);
   if (!i) { S.ish = null; return chiz(); }
-  const Q = qadamlar(), h = holat(i), joriy = Q.find((q) => qadamHol(i, q) === 'h');
+  const Q = qadamlar(i), h = holat(i), joriy = Q.find((q) => qadamHol(i, q) === 'h');
   const orqa = S.royxatdan && !tg?.BackButton ? `<button class="orqa" id="orqa" aria-label="Hamma update'lar">${ik('arrow-left')}</button>` : '';
   const yorliq = h.kut ? 'Sizni kutyapti' : h.tayyor ? 'Tayyor' : h.xato ? "To'xtadi" : 'Jarayonda';
   ilova.innerHTML = `<main>
