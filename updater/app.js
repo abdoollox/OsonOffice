@@ -2,7 +2,7 @@
 // Dizayn: UI UX Pro Max skill — "Logistics/Delivery": posilka kuzatuvidek. Update sahifasida 5 qadam vertikal yo'l bo'lib turadi,
 // har qadamning materiali o'z ichida (Material — PM fayllari, Savollar — savol va javoblar, Ssenariy — kadrli sahnalar).
 // Ma'lumot A bilan bir xil: updater-api.osonacademy.uz/api/ishlar.
-import { IK, PH } from './ikonlar.js?v=20261124f'; // ?v= — Telegram eski nusxani keshdan bermasin; fayl o'zgarsa raqamni yangilang
+import { IK, PH } from './ikonlar.js?v=20261125a'; // ?v= — Telegram eski nusxani keshdan bermasin; fayl o'zgarsa raqamni yangilang
 
 const API = 'https://updater-api.osonacademy.uz/api';
 const tg = window.Telegram?.WebApp;
@@ -33,11 +33,13 @@ const QADAMLAR_HAMMASI = [
   // 2026-11-24 (Abdulloh): kanalga faqat promo chiqadi — e'lon promo'dan keyin darhol; uzun video e'lon qilinmaydi (YouTube va LMS)
   { id: 'elon', ikon: 'paper-plane-right-fill', nom: "E'lon", ich: ['elon-materiallari', 'elon'], izoh: 'Promo video va post kanalga — ruxsat bilan' },
   { id: 'uzun', ikon: 'monitor-play-fill', nom: 'Uzun video', ich: ['uzun-ssenariy', 'uzun-loyiha-tasdiq', 'uzun-yasash', 'uzun-ovoz', 'uzun-render', 'uzun-tekshiruv', 'uzun-tuzatish', 'youtube'], izoh: "Batafsil video (texnik dars) — PM va QA ko'radi, YouTube'ga joylanadi" },
-  { id: 'oqitish', ikon: 'graduation-cap-fill', nom: 'Test', ich: ['test-yozish', 'test', 'lms'], izoh: "Agent uzun video bo'yicha test tuzadi, Akademiya tekshiradi" },
+  { id: 'oqitish', ikon: 'graduation-cap-fill', nom: 'Test', ich: ['test-yozish', 'test'], izoh: "Agent uzun video bo'yicha test tuzadi, Akademiya tekshiradi" },
+  // 2026-11-25 (Abdulloh, A): Exode alohida qadam — Test yashil bo'lsa "Akademiya tasdiqladi", Exode yashil bo'lsa "dars xodimlar platformasida"
+  { id: 'exode', ikon: 'chalkboard-teacher-fill', nom: 'Exode', ich: ['lms'], izoh: "Uzun video va test xodimlar platformasiga (Exode) dars bo'lib joylanadi" },
 ];
-// uzun video to'xtatilgan bo'lsa (bosqichlari ro'yxatda yo'q) — "Uzun video" va "O'qitish" qadamlari joyida qoladi, lekin xira (toxtagan)
-// i.uzun — shu update uchun uzun video yoqilgan (umumiy kalit o'chiq bo'lsa ham; YouTube/test/Exode hali qurilmagan)
-const UZUN_ICH = ['uzun-ssenariy', 'uzun-loyiha-tasdiq', 'uzun-yasash', 'uzun-ovoz', 'uzun-render', 'uzun-tekshiruv', 'uzun-tuzatish', 'test-yozish', 'test'];
+// uzun video to'xtatilgan bo'lsa (bosqichlari ro'yxatda yo'q) — "Uzun video", "Test" va "Exode" qadamlari joyida qoladi, lekin xira (toxtagan)
+// i.uzun — shu update uchun uzun video yoqilgan (umumiy kalit o'chiq bo'lsa ham; YouTube hali qurilmagan)
+const UZUN_ICH = ['uzun-ssenariy', 'uzun-loyiha-tasdiq', 'uzun-yasash', 'uzun-ovoz', 'uzun-render', 'uzun-tekshiruv', 'uzun-tuzatish', 'test-yozish', 'test', 'lms'];
 const qadamlar = (i) => {
   const bor = new Set([...(S.data?.bosqichlar || []).map((b) => b.id), ...(i?.uzun ? UZUN_ICH : [])]);
   return QADAMLAR_HAMMASI.map((q) => {
@@ -49,7 +51,7 @@ const qadamlar = (i) => {
 // hozirgi holat → bir jumla; kut: odamdan javob kutilyapti
 function holat(i) {
   const javobsiz = i.savollar.filter((s) => s.javob == null).length;
-  if (!i.navbatdagi) return { matn: "E'lon qilindi", tayyor: true };
+  if (!i.navbatdagi) return { matn: i.exode?.nashr ? "E'lon qilindi, dars Exode'da" : "E'lon qilindi", tayyor: true };
   if (i.bosqichlar[i.navbatdagi]?.holat === 'xato') return { matn: "To'xtab qoldi — Abdulloh ko'rib chiqadi", xato: true };
   if (i.topshirildi && i.topshirildi.bosqich === i.navbatdagi) return { matn: `Javob bo'lmadi — mas'uliyat ${i.topshirildi.kimga.join(', ')} ga o'tdi`, xato: true };
   return {
@@ -276,16 +278,25 @@ const ssenariyHtml = (i) => sahnaHtml(i) + (i.qoshimcha?.length ? `<h3 class="ki
   <div class="mk-nom"><b>${esc(m.izoh || m.fayl)}</b><span>${esc([m.kim, sana(m.vaqt)].filter(Boolean).join(' · '))}</span></div></div></li>`).join('')}</ul>` : '');
 // Test (2026-11-24): savollar va 4 variant, to'g'ri javob yashil belgi bilan; Excel fayli topikda (test.xlsx)
 function testHtml(i) {
-  // Exode darsi (lms bosqichi, exode.mjs): bosilsa admin panelda ochiladi
-  const ex = i.exode ? `<ul class="materiallar"><li class="mk"><div class="mk-bosh"><span class="mk-ik">${ik('video')}</span>
-    <div class="mk-nom"><b>Exode darsi</b><span>${esc(i.exode.nomi || '')} · ${i.exode.nashr ? 'nashr qilingan' : 'qoralama'}</span></div>
-    <a class="mk-tg" href="${esc(i.exode.havola)}" target="_blank" rel="noopener">${ik('globe')}Ochish</a></div></li></ul>` : '';
-  if (!i.test?.length) return ex;
-  return ex + `<p class="yq-izoh">${i.test.length} ta savol — uzun video bo'yicha. Excel fayli update topigida.</p><ol class="quti ro">${i.test.map((q, n) => `<li class="tsavol">
+  if (!i.test?.length) return '';
+  return `<p class="yq-izoh">${i.test.length} ta savol — uzun video bo'yicha. Excel fayli update topigida.</p><ol class="quti ro">${i.test.map((q, n) => `<li class="tsavol">
     <p><b>${n + 1}.</b> ${esc(q.savol)}</p><ul>${(q.variantlar || []).map((v, k) => `<li class="${k === q.togri ? 'togri' : ''}">${k === q.togri ? ik('check') : '<span class="tv"></span>'}<span>${'ABCD'[k]}) ${esc(v)}</span></li>`).join('')}</ul>
     ${q.manba ? `<small>Videoda: ${esc(q.manba)}</small>` : ''}</li>`).join('')}</ol>`;
 }
-const ICHI = { material: materialHtml, savollar: savolHtml, ssenariy: ssenariyHtml, video: videoHtml, elon: elonHtml, uzun: uzunHtml, oqitish: testHtml };
+// Exode (2026-11-25): lms bosqichi (exode.mjs) — dars kartasi (nomi, nashr/qoralama, savollar soni, bosilsa admin panelda ochiladi); joylay olmasa — sababi
+function exodeHtml(i) {
+  const s = i.bosqichlar.lms;
+  // texnik sabab (masalan, «seans tugagan — node … kirish») faqat egaga; PM/QA'ga — kim hal qilishi
+  const xato = s?.holat === 'xato' ? `<p class="yq-izoh exode-xato">${ik('circle-exclamation-point')}${S.data.ega
+    ? `Joylab bo'lmadi: ${esc(String(s.izoh || 'sababi yozilmagan').replace(/^Exode:\s*/, '').replace(/`/g, ''))}` : "Joylab bo'lmadi — Abdulloh ko'rib chiqadi"}</p>` : '';
+  if (!i.exode) return xato;
+  const e = i.exode;
+  const qator = [e.nashr ? 'nashr qilingan — xodimlarga ochiq' : 'qoralama — xodimlarga hali ko\'rinmaydi', e.savollar != null ? `${e.savollar} ta savol` : ''].filter(Boolean).join(' · ');
+  return xato + `<ul class="materiallar"><li class="mk"><div class="mk-bosh"><span class="mk-ik">${ikf('chalkboard-teacher-fill')}</span>
+    <div class="mk-nom"><b>${esc(e.nomi || 'Exode darsi')}</b><span>${esc(qator)}</span></div>
+    ${e.havola ? `<a class="mk-tg" href="${esc(e.havola)}" target="_blank" rel="noopener">${ik('globe')}Ochish</a>` : ''}</div></li></ul>`;
+}
+const ICHI = { material: materialHtml, savollar: savolHtml, ssenariy: ssenariyHtml, video: videoHtml, elon: elonHtml, uzun: uzunHtml, oqitish: testHtml, exode: exodeHtml };
 
 function ishChiz() {
   const i = S.data.ishlar.find((x) => x.nom === S.ish);

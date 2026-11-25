@@ -57,7 +57,7 @@ html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
 /* Ro'yxatdagi 5 qadam belgisi: bajarilgan — yashil + ✓, hozirgisi — ko'k (sizni kutsa — to'q sariq), keyingilari — xira */
-.belgilar { list-style: none; margin: var(--s3) 0 0; padding: 0; display: grid; grid-template-columns: repeat(7, 1fr); }
+.belgilar { list-style: none; margin: var(--s3) 0 0; padding: 0; display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); } /* qadamlar soni o'zgarsa ham (8 — Exode bilan) bitta qatorda */
 .belgilar li { position: relative; display: grid; justify-items: center; gap: var(--s1); }
 .belgilar li::before { content: ''; position: absolute; top: 15px; right: 50%; width: 100%; height: 2px; background: var(--c-line); }
 .belgilar li:first-child::before { display: none; }
@@ -75,6 +75,12 @@ html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; }
   background: var(--c-done); color: var(--c-card); border: 2px solid var(--c-card); }
 .b-ok .ik { width: 10px; height: 10px; }
 .b-nom { font-size: 12px; line-height: 1.2; color: var(--c-faint); text-align: center; }
+/* tor ekranda (telefon) 8 qadam sig'sin */
+@media (max-width: 430px) {
+  .b-ik { width: 28px; height: 28px; } .b-ik > .ik { width: 15px; height: 15px; } .belgilar li::before { top: 13px; }
+  .b-nom { font-size: 10px; letter-spacing: -.1px; } /* so'z ichida bo'linmaydi, «Uzun video» — ikki qator */
+  .qator { grid-template-columns: 4px 1fr; } .qator > .ik { display: none; } /* strelka joyi belgilarga — butun karta bosiladi */
+}
 .belgilar li.t .b-nom { color: var(--c-muted); }
 /* o — bu ishga tegishli emas (masalan, eski update'da uzun video yo'q): xira, chiziqli */
 .belgilar li.o .b-ik { border-style: dashed; opacity: .45; }
@@ -274,3 +280,6 @@ a.mat .ik:last-child { color: var(--c-faint); width: 16px; height: 16px; }
 .tsavol ul li .tv { width: 12px; height: 12px; margin: 4px 2px 0; border-radius: 50%; border: 1.5px solid var(--c-line); }
 .tsavol ul li.togri { color: var(--c-done); font-weight: 600; }
 .tsavol small { display: block; margin-top: var(--s2); color: var(--c-muted); font-size: 13px; }
+/* Exode qadami (2026-11-25): joylab bo'lmagan sabab */
+.exode-xato { color: var(--c-bad); display: flex; gap: 8px; align-items: flex-start; }
+.exode-xato svg { width: 18px; height: 18px; flex: none; margin-top: 2px; }
